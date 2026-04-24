@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CC654E0D2DABD9C200D54F83"
-               BuildableName = "TrollSpeed.app"
+               BuildableName = "BinanceHUD.app"
                BlueprintName = "TrollSpeed.Sim"
                ReferencedContainer = "container:TrollSpeed.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CC654E0D2DABD9C200D54F83"
-            BuildableName = "TrollSpeed.app"
+            BuildableName = "BinanceHUD.app"
             BlueprintName = "TrollSpeed.Sim"
             ReferencedContainer = "container:TrollSpeed.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CC654E0D2DABD9C200D54F83"
-            BuildableName = "TrollSpeed.app"
+            BuildableName = "BinanceHUD.app"
             BlueprintName = "TrollSpeed.Sim"
             ReferencedContainer = "container:TrollSpeed.xcodeproj">
          </BuildableReference>

@@ -725,7 +725,7 @@ static const CGFloat _gAuthorLabelBottomConstraintConstantRegular = -80.f;
     if (_isRemoteHUDActive) {
         return;
     }
-    NSString *repoURLString = @"https://trollspeed.app";
+    NSString *repoURLString = @"https://github.com/Inighty/trollspeed";
     NSURL *repoURL = [NSURL URLWithString:repoURLString];
     [[UIApplication sharedApplication] openURL:repoURL options:@{} completionHandler:nil];
 }

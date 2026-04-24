@@ -33,13 +33,13 @@ THEOS="$THEOS" | xcpretty
 chmod 0644 Resources/Info.plist
 cp supports/entitlements.plist TrollSpeed.xcarchive/Products
 cd TrollSpeed.xcarchive/Products/Applications || exit
-codesign --remove-signature TrollSpeed.app
+codesign --remove-signature BinanceHUD.app
 cd - || exit
 cd TrollSpeed.xcarchive/Products || exit
 mv Applications Payload
-ldid -Sentitlements.plist Payload/TrollSpeed.app
-chmod 0644 Payload/TrollSpeed.app/Info.plist
-zip -qr TrollSpeed.tipa Payload
+ldid -Sentitlements.plist Payload/BinanceHUD.app
+chmod 0644 Payload/BinanceHUD.app/Info.plist
+zip -qr BinanceHUD.tipa Payload
 cd - || exit
 mkdir -p packages
-mv TrollSpeed.xcarchive/Products/TrollSpeed.tipa packages/TrollSpeed+AppIntents16_$VERSION.tipa
+mv TrollSpeed.xcarchive/Products/BinanceHUD.tipa packages/BinanceHUD+AppIntents16_$VERSION.tipa

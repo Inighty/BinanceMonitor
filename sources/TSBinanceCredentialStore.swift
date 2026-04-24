@@ -3,7 +3,7 @@ import Security
 
 @objcMembers
 final class TSBinanceCredentialStore: NSObject {
-    private static let service = "ch.xxtou.hudapp.binance"
+    private static let service = "com.inighty.binancehud.binance"
     private static let apiKeyAccount = "apiKey"
     private static let secretAccount = "secret"
 

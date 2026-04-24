@@ -4,20 +4,20 @@ INSTALL_TARGET_PROCESSES := Preferences
 
 include $(THEOS)/makefiles/common.mk
 
-BUNDLE_NAME += TrollSpeedPrefs
+BUNDLE_NAME += BinanceHUDPrefs
 
-TrollSpeedPrefs_FILES += TSPrefsRootListController.m
+BinanceHUDPrefs_FILES += TSPrefsRootListController.m
 
 ifeq ($(THEOS_PACKAGE_SCHEME),roothide)
-TrollSpeedPrefs_FILES += ../libroot/dyn.c
-TrollSpeedPrefs_LIBRARIES += roothide
+BinanceHUDPrefs_FILES += ../libroot/dyn.c
+BinanceHUDPrefs_LIBRARIES += roothide
 endif
 
-TrollSpeedPrefs_CFLAGS += -fobjc-arc
-TrollSpeedPrefs_CFLAGS += -I../supports/
+BinanceHUDPrefs_CFLAGS += -fobjc-arc
+BinanceHUDPrefs_CFLAGS += -I../supports/
 
-TrollSpeedPrefs_FRAMEWORKS += UIKit
-TrollSpeedPrefs_PRIVATE_FRAMEWORKS += Preferences
-TrollSpeedPrefs_INSTALL_PATH += /Library/PreferenceBundles
+BinanceHUDPrefs_FRAMEWORKS += UIKit
+BinanceHUDPrefs_PRIVATE_FRAMEWORKS += Preferences
+BinanceHUDPrefs_INSTALL_PATH += /Library/PreferenceBundles
 
 include $(THEOS_MAKE_PATH)/bundle.mk

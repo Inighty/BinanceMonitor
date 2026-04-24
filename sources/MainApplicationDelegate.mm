@@ -24,7 +24,7 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(nonnull NSURL *)url options:(nonnull NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
-    if ([url.scheme isEqualToString:@"trollspeed"]) {
+    if ([url.scheme isEqualToString:@"binancehud"]) {
         if ([url.host isEqualToString:@"toggle"]) {
             [self setupAndNotifyToggleHUDAfterLaunchWithAction:nil];
             return YES;
@@ -41,7 +41,7 @@
 
 - (void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(void (^)(BOOL succeeded))completionHandler
 {
-    if ([shortcutItem.type isEqualToString:@"ch.xxtou.shortcut.toggle-hud"])
+    if ([shortcutItem.type isEqualToString:@"com.inighty.binancehud.shortcut.toggle-hud"])
     {
         [self setupAndNotifyToggleHUDAfterLaunchWithAction:nil];
     }

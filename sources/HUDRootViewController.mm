@@ -53,7 +53,7 @@ static void LaunchServicesApplicationStateChanged
 
     for (LSApplicationProxy *app in [[objc_getClass("LSApplicationWorkspace") defaultWorkspace] allApplications])
     {
-        if ([app.applicationIdentifier isEqualToString:@"ch.xxtou.hudapp"])
+        if ([app.applicationIdentifier isEqualToString:@"com.inighty.binancehud"])
         {
             isAppInstalled = YES;
             break;
@@ -757,14 +757,14 @@ static const CACornerMask kCornerMaskAll = kCALayerMinXMinYCorner | kCALayerMaxX
     [self saveUserDefaults];
 }
 
-#define PREFS_PATH "/var/mobile/Library/Preferences/ch.xxtou.hudapp.prefs.plist"
+#define PREFS_PATH "/var/mobile/Library/Preferences/com.inighty.binancehud.prefs.plist"
 
 - (NSDictionary *)extraUserDefaultsDictionary {
     static BOOL isJailbroken = NO;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
       isJailbroken = [[NSFileManager defaultManager]
-          fileExistsAtPath:JBROOT_PATH_NSSTRING(@"/Library/PreferenceBundles/TrollSpeedPrefs.bundle")];
+          fileExistsAtPath:JBROOT_PATH_NSSTRING(@"/Library/PreferenceBundles/BinanceHUDPrefs.bundle")];
     });
     if (!isJailbroken) {
         return nil;

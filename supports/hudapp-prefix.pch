@@ -31,9 +31,9 @@
     #import "NSUserDefaults+Private.h"
 
 #if !TARGET_OS_SIMULATOR
-    #define USER_DEFAULTS_PATH @"/var/mobile/Library/Preferences/ch.xxtou.hudapp.plist"
+    #define USER_DEFAULTS_PATH @"/var/mobile/Library/Preferences/com.inighty.binancehud.plist"
 #else
-    #define USER_DEFAULTS_PATH ([[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"ch.xxtou.hudapp.plist"])
+    #define USER_DEFAULTS_PATH ([[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:@"com.inighty.binancehud.plist"])
 #endif
 #endif
 
@@ -50,16 +50,16 @@
 #define FADE_OUT_DURATION 0.25
 
 // HUD -> APP: Notify APP that the HUD's view is appeared.
-#define NOTIFY_LAUNCHED_HUD "ch.xxtou.notification.hud.launched"
+#define NOTIFY_LAUNCHED_HUD "com.inighty.binancehud.notification.hud.launched"
 
 // APP -> HUD: Notify HUD to dismiss itself.
-#define NOTIFY_DISMISSAL_HUD "ch.xxtou.notification.hud.dismissal"
+#define NOTIFY_DISMISSAL_HUD "com.inighty.binancehud.notification.hud.dismissal"
 
 // APP -> HUD: Notify HUD that the user defaults has been changed by APP.
-#define NOTIFY_RELOAD_HUD "ch.xxtou.notification.hud.reload"
+#define NOTIFY_RELOAD_HUD "com.inighty.binancehud.notification.hud.reload"
 
 // HUD -> APP: Notify APP that the user defaults has been changed by HUD.
-#define NOTIFY_RELOAD_APP "ch.xxtou.notification.app.reload"
+#define NOTIFY_RELOAD_APP "com.inighty.binancehud.notification.app.reload"
 
 #ifdef __OBJC__
 #import "hudapp-bridging-header.h"

@@ -114,8 +114,8 @@
 		CC654E072DABD95200D54F83 /* BackBoardServices.Sim.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; path = BackBoardServices.Sim.tbd; sourceTree = "<group>"; };
 		CC654E092DABD95800D54F83 /* GraphicsServices.Sim.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; path = GraphicsServices.Sim.tbd; sourceTree = "<group>"; };
 		CC654E0B2DABD95E00D54F83 /* SpringBoardServices.Sim.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; path = SpringBoardServices.Sim.tbd; sourceTree = "<group>"; };
-		CC654E452DABD9C200D54F83 /* TrollSpeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TrollSpeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		CC711D012B5BF550007235A6 /* TrollSpeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TrollSpeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC654E452DABD9C200D54F83 /* BinanceHUD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BinanceHUD.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC711D012B5BF550007235A6 /* BinanceHUD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BinanceHUD.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC711D102B5BF551007235A6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CC711D1E2B5BF5C6007235A6 /* HUDHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HUDHelper.mm; sourceTree = "<group>"; };
 		CC711D1F2B5BF5C6007235A6 /* RootViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RootViewController.mm; sourceTree = "<group>"; };
@@ -262,8 +262,8 @@
 		CC711D022B5BF550007235A6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CC711D012B5BF550007235A6 /* TrollSpeed.app */,
-				CC654E452DABD9C200D54F83 /* TrollSpeed.app */,
+				CC711D012B5BF550007235A6 /* BinanceHUD.app */,
+				CC654E452DABD9C200D54F83 /* BinanceHUD.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -451,7 +451,7 @@
 			);
 			name = TrollSpeed.Sim;
 			productName = TrollSpeed;
-			productReference = CC654E452DABD9C200D54F83 /* TrollSpeed.app */;
+			productReference = CC654E452DABD9C200D54F83 /* BinanceHUD.app */;
 			productType = "com.apple.product-type.application";
 		};
 		CC711D002B5BF550007235A6 /* TrollSpeed */ = {
@@ -468,7 +468,7 @@
 			);
 			name = TrollSpeed;
 			productName = TrollSpeed;
-			productReference = CC711D012B5BF550007235A6 /* TrollSpeed.app */;
+			productReference = CC711D012B5BF550007235A6 /* BinanceHUD.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -661,7 +661,7 @@
 					"THEOS_PACKAGE_INSTALL_PREFIX=\\\"\\\"",
 				);
 				INFOPLIST_FILE = Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TrollSpeed;
+					INFOPLIST_KEY_CFBundleDisplayName = BinanceHUD;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -675,8 +675,8 @@
 					"$(PROJECT_DIR)/libraries",
 				);
 				MARKETING_VERSION = 2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.xxtou.hudapp;
-				PRODUCT_NAME = TrollSpeed;
+					PRODUCT_BUNDLE_IDENTIFIER = com.inighty.binancehud;
+					PRODUCT_NAME = BinanceHUD;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = iphonesimulator;
 				SUPPORTS_MACCATALYST = NO;
@@ -706,7 +706,7 @@
 					"THEOS_PACKAGE_INSTALL_PREFIX=\\\"\\\"",
 				);
 				INFOPLIST_FILE = Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TrollSpeed;
+					INFOPLIST_KEY_CFBundleDisplayName = BinanceHUD;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -720,8 +720,8 @@
 					"$(PROJECT_DIR)/libraries",
 				);
 				MARKETING_VERSION = 2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.xxtou.hudapp;
-				PRODUCT_NAME = TrollSpeed;
+					PRODUCT_BUNDLE_IDENTIFIER = com.inighty.binancehud;
+					PRODUCT_NAME = BinanceHUD;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = iphonesimulator;
 				SUPPORTS_MACCATALYST = NO;
@@ -886,7 +886,7 @@
 					"THEOS_PACKAGE_INSTALL_PREFIX=\\\"\\\"",
 				);
 				INFOPLIST_FILE = Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TrollSpeed;
+					INFOPLIST_KEY_CFBundleDisplayName = BinanceHUD;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -900,8 +900,8 @@
 					"$(PROJECT_DIR)/libraries",
 				);
 				MARKETING_VERSION = 2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.xxtou.hudapp;
-				PRODUCT_NAME = TrollSpeed;
+					PRODUCT_BUNDLE_IDENTIFIER = com.inighty.binancehud;
+					PRODUCT_NAME = BinanceHUD;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
@@ -935,7 +935,7 @@
 					"THEOS_PACKAGE_INSTALL_PREFIX=\\\"\\\"",
 				);
 				INFOPLIST_FILE = Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TrollSpeed;
+					INFOPLIST_KEY_CFBundleDisplayName = BinanceHUD;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -949,8 +949,8 @@
 					"$(PROJECT_DIR)/libraries",
 				);
 				MARKETING_VERSION = 2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.xxtou.hudapp;
-				PRODUCT_NAME = TrollSpeed;
+					PRODUCT_BUNDLE_IDENTIFIER = com.inighty.binancehud;
+					PRODUCT_NAME = BinanceHUD;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = iphoneos;
 				SUPPORTS_MACCATALYST = NO;

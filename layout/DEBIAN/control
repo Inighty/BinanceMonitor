@@ -1,9 +1,9 @@
-Package: ch.xxtou.hudapp.jb
-Name: TrollSpeed JB
+Package: com.inighty.binancehud.jb
+Name: BinanceHUD JB
 Version: 2.0-13
 Section: Tweaks
 Depends: firmware (>= 14.0)
 Architecture: iphoneos-arm
-Author: Lessica <82flex@gmail.com>
-Maintainer: Lessica <82flex@gmail.com>
-Description: Troll your speed, but jailbroken.
+Author: inighty <mcshr@hotmail.com>
+Maintainer: inighty <mcshr@hotmail.com>
+Description: Show Binance futures positions in a floating HUD, jailbroken.

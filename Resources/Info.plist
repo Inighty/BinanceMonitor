@@ -5,19 +5,19 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDisplayName</key>
-	<string>TrollSpeed</string>
+	<string>BinanceHUD</string>
 	<key>CFBundleExecutable</key>
-	<string>TrollSpeed</string>
+	<string>BinanceHUD</string>
 	<key>CFBundleIconFile</key>
 	<string>icon.png</string>
 	<key>CFBundleIconName</key>
 	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
-	<string>ch.xxtou.hudapp</string>
+	<string>com.inighty.binancehud</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>TrollSpeed</string>
+	<string>BinanceHUD</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -28,10 +28,10 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>ch.xxtou.hudapp</string>
+			<string>com.inighty.binancehud</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>trollspeed</string>
+				<string>binancehud</string>
 			</array>
 		</dict>
 	</array>
@@ -51,7 +51,7 @@
 			<key>UIApplicationShortcutItemTitle</key>
 			<string>Toggle HUD</string>
 			<key>UIApplicationShortcutItemType</key>
-			<string>ch.xxtou.shortcut.toggle-hud</string>
+			<string>com.inighty.binancehud.shortcut.toggle-hud</string>
 		</dict>
 	</array>
 	<key>UIApplicationShowsViewsWhileLocked</key>
