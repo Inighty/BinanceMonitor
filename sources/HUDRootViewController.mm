@@ -336,6 +336,7 @@ static NSAttributedString *attributedDownloadPrefix = nil;
 static NSAttributedString *attributedInlineSeparator = nil;
 static NSAttributedString *attributedLineSeparator = nil;
 
+__attribute__((unused))
 static NSAttributedString *formattedAttributedString(BOOL isFocused)
 {
     @autoreleasepool
@@ -443,6 +444,7 @@ static NSAttributedString *formattedAttributedString(BOOL isFocused)
     }
 }
 
+__attribute__((unused))
 static NSAttributedString *formattedFPSAttributedString(BOOL isFocused)
 {
     @autoreleasepool
