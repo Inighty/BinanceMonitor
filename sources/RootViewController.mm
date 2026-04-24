@@ -317,7 +317,10 @@ static const CGFloat _gAuthorLabelBottomConstraintConstantRegular = -80.f;
     }
 
     NSError *credentialError = nil;
-    [[TSBinanceCredentialStore sharedStore] clearCredentials:&credentialError];
+    BOOL clearedCredentials = [[TSBinanceCredentialStore sharedStore] clearCredentials:&credentialError];
+    if (!clearedCredentials && credentialError) {
+        log_error(OS_LOG_DEFAULT, "Failed to clear Binance credentials: %{public}@", credentialError.localizedDescription);
+    }
 
     // Reset custom user defaults
     BOOL removed = [[NSFileManager defaultManager] removeItemAtPath:(JBROOT_PATH_NSSTRING(USER_DEFAULTS_PATH)) error:nil];
