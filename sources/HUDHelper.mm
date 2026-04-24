@@ -222,6 +222,14 @@ NSUserDefaults *GetStandardUserDefaults(void)
             HUDUserDefaultsKeyRealCustomOffsetY: @0,
             HUDUserDefaultsKeyUsesCustomFontSize: @NO,
             HUDUserDefaultsKeyRealCustomFontSize: @9,
+            HUDUserDefaultsKeyBinanceShowSymbol: @YES,
+            HUDUserDefaultsKeyBinanceShowSide: @YES,
+            HUDUserDefaultsKeyBinanceShowQuantity: @NO,
+            HUDUserDefaultsKeyBinanceShowCurrentPrice: @YES,
+            HUDUserDefaultsKeyBinanceShowEntryPrice: @NO,
+            HUDUserDefaultsKeyBinanceShowPnL: @YES,
+            HUDUserDefaultsKeyBinanceShowROE: @NO,
+            HUDUserDefaultsKeyBinanceRefreshInterval: @15,
         }];
     });
     return _userDefaults;

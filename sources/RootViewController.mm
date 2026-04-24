@@ -24,6 +24,34 @@ static const CGFloat _gTopButtonConstraintsConstantRegularPad = 46.f;
 static const CGFloat _gAuthorLabelBottomConstraintConstantCompact = -20.f;
 static const CGFloat _gAuthorLabelBottomConstraintConstantRegular = -80.f;
 
+static NSArray<NSNumber *> *BinanceRefreshIntervalOptions(void)
+{
+    static NSArray<NSNumber *> *options = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        options = @[ @3, @5, @10, @15, @30, @60 ];
+    });
+    return options;
+}
+
+static BOOL IsBinanceStandardToggleKey(NSString * _Nonnull key)
+{
+    static NSSet<NSString *> *keys = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        keys = [NSSet setWithArray:@[
+            HUDUserDefaultsKeyBinanceShowSymbol,
+            HUDUserDefaultsKeyBinanceShowSide,
+            HUDUserDefaultsKeyBinanceShowQuantity,
+            HUDUserDefaultsKeyBinanceShowCurrentPrice,
+            HUDUserDefaultsKeyBinanceShowEntryPrice,
+            HUDUserDefaultsKeyBinanceShowPnL,
+            HUDUserDefaultsKeyBinanceShowROE,
+        ]];
+    });
+    return [keys containsObject:key];
+}
+
 @implementation RootViewController {
     NSMutableDictionary *_userDefaults;
     MainButton *_mainButton;
@@ -613,6 +641,18 @@ static const CGFloat _gAuthorLabelBottomConstraintConstantRegular = -80.f;
         return [GetStandardUserDefaults() boolForKey:HUDUserDefaultsKeyBinanceUseTestnet];
     }
 
+    if ([key isEqualToString:HUDUserDefaultsKeyBinanceRefreshInterval]) {
+        NSInteger interval = [GetStandardUserDefaults() integerForKey:HUDUserDefaultsKeyBinanceRefreshInterval];
+        if (interval <= 0) {
+            interval = 15;
+        }
+        return interval != 15;
+    }
+
+    if (IsBinanceStandardToggleKey(key)) {
+        return [GetStandardUserDefaults() boolForKey:key];
+    }
+
     [self loadUserDefaults:NO];
     NSNumber *mode = [_userDefaults objectForKey:key];
     return mode != nil ? [mode boolValue] : NO;
@@ -634,6 +674,25 @@ static const CGFloat _gAuthorLabelBottomConstraintConstantRegular = -80.f;
     if ([key isEqualToString:HUDUserDefaultsKeyBinanceUseTestnet]) {
         BOOL enabled = [GetStandardUserDefaults() boolForKey:HUDUserDefaultsKeyBinanceUseTestnet];
         [GetStandardUserDefaults() setBool:!enabled forKey:HUDUserDefaultsKeyBinanceUseTestnet];
+        [GetStandardUserDefaults() synchronize];
+        notify_post(NOTIFY_RELOAD_HUD);
+        return;
+    }
+
+    if ([key isEqualToString:HUDUserDefaultsKeyBinanceRefreshInterval]) {
+        NSArray<NSNumber *> *options = BinanceRefreshIntervalOptions();
+        NSInteger currentInterval = [GetStandardUserDefaults() integerForKey:HUDUserDefaultsKeyBinanceRefreshInterval];
+        NSUInteger currentIndex = [options indexOfObject:@(currentInterval)];
+        NSUInteger nextIndex = (currentIndex == NSNotFound ? 0 : (currentIndex + 1) % options.count);
+        [GetStandardUserDefaults() setInteger:options[nextIndex].integerValue forKey:HUDUserDefaultsKeyBinanceRefreshInterval];
+        [GetStandardUserDefaults() synchronize];
+        notify_post(NOTIFY_RELOAD_HUD);
+        return;
+    }
+
+    if (IsBinanceStandardToggleKey(key)) {
+        BOOL enabled = [GetStandardUserDefaults() boolForKey:key];
+        [GetStandardUserDefaults() setBool:!enabled forKey:key];
         [GetStandardUserDefaults() synchronize];
         notify_post(NOTIFY_RELOAD_HUD);
         return;

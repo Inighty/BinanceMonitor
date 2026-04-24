@@ -30,6 +30,14 @@ static HUDUserDefaultsKey const HUDUserDefaultsKeyHideAtSnapshot = @"hideAtSnaps
 static HUDUserDefaultsKey const HUDUserDefaultsKeyDisplayMode = @"displayMode";
 static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceUseTestnet = @"binanceUseTestnet";
 static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceAccount = @"binanceAccount";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceShowSymbol = @"binanceShowSymbol";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceShowSide = @"binanceShowSide";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceShowQuantity = @"binanceShowQuantity";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceShowCurrentPrice = @"binanceShowCurrentPrice";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceShowEntryPrice = @"binanceShowEntryPrice";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceShowPnL = @"binanceShowPnL";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceShowROE = @"binanceShowROE";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceRefreshInterval = @"binanceRefreshInterval";
 
 static HUDUserDefaultsKey const HUDUserDefaultsKeyUsesCustomFontSize = @"usesCustomFontSize";
 static HUDUserDefaultsKey const HUDUserDefaultsKeyRealCustomFontSize = @"realCustomFontSize";

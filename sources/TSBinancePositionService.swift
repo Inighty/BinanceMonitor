@@ -84,10 +84,21 @@ private struct TSBinanceDisplayEntry {
     let sortValue: Decimal
 }
 
+private struct TSBinanceDisplayOptions {
+    let showSymbol: Bool
+    let showSide: Bool
+    let showQuantity: Bool
+    let showCurrentPrice: Bool
+    let showEntryPrice: Bool
+    let showPnL: Bool
+    let showRoe: Bool
+    let snapshotRefreshInterval: TimeInterval
+}
+
 @objcMembers
 final class TSBinancePositionService: NSObject {
     private static let sharedInstance = TSBinancePositionService()
-    private static let snapshotRefreshInterval: TimeInterval = 15
+    private static let defaultSnapshotRefreshInterval: TimeInterval = 15
     private static let keepAliveInterval: TimeInterval = 50 * 60
     private static let reconnectBaseDelay: TimeInterval = 3
     private static let maxReconnectDelay: TimeInterval = 30
@@ -104,6 +115,7 @@ final class TSBinancePositionService: NSObject {
     private var snapshotState: TSBinanceSnapshotState = .notConfigured
     private var connectionState: TSBinanceConnectionState = .idle
     private var currentConfig: TSBinanceConfig?
+    private var displayOptions = TSBinancePositionService.defaultDisplayOptions()
     private var displayEntries: [TSBinanceDisplayEntry] = []
     private var lastUpdatedAt: Date?
     private var latestErrorMessage: String?
@@ -156,13 +168,13 @@ final class TSBinancePositionService: NSObject {
     func hudAttributedText(forCentered centered: Bool, focused: Bool, fontSize: CGFloat, fontWeight: CGFloat) -> NSAttributedString {
         var state: TSBinanceSnapshotState = .notConfigured
         var entries: [TSBinanceDisplayEntry] = []
-        var updatedAt: Date?
+        var options = Self.defaultDisplayOptions()
         var latestError: String?
 
         workQueue.sync {
             state = snapshotState
             entries = displayEntries
-            updatedAt = lastUpdatedAt
+            options = displayOptions
             latestError = latestErrorMessage
         }
 
@@ -202,9 +214,6 @@ final class TSBinancePositionService: NSObject {
 
         guard !entries.isEmpty else {
             attributed.append(NSAttributedString(string: NSLocalizedString("No open futures positions", comment: "TSBinancePositionService"), attributes: baseAttributes))
-            if let updatedAt {
-                attributed.append(NSAttributedString(string: "\n" + relativeUpdateText(for: updatedAt), attributes: mutedAttributes))
-            }
             return attributed
         }
 
@@ -216,27 +225,15 @@ final class TSBinancePositionService: NSObject {
                 attributed.append(NSAttributedString(string: "\n", attributes: detailAttributes))
             }
 
-            let mainLine = "\(entry.symbol) \(entry.side) \(entry.quantity)  \(entry.pnl)"
+            let mainLine = mainLineText(for: entry, options: options)
             attributed.append(NSAttributedString(string: mainLine, attributes: baseAttributes))
         }
 
         let primaryEntry = visibleEntries[0]
         let remainingCount = entries.count - visibleEntries.count
 
-        if focused {
-            let secondaryLine = "E \(primaryEntry.entryPrice)  M \(primaryEntry.markPrice)"
+        if (focused || centered), let secondaryLine = secondaryLineText(for: primaryEntry, options: options) {
             attributed.append(NSAttributedString(string: "\n" + secondaryLine, attributes: detailAttributes))
-
-            if let roe = primaryEntry.roe {
-                attributed.append(NSAttributedString(string: "\nROE \(roe)", attributes: detailAttributes))
-            }
-        } else if centered {
-            if let roe = primaryEntry.roe {
-                attributed.append(NSAttributedString(string: "\nROE \(roe)", attributes: detailAttributes))
-            } else {
-                let secondaryLine = "E \(primaryEntry.entryPrice)  M \(primaryEntry.markPrice)"
-                attributed.append(NSAttributedString(string: "\n" + secondaryLine, attributes: detailAttributes))
-            }
         }
 
         if remainingCount > 0 {
@@ -244,8 +241,6 @@ final class TSBinancePositionService: NSObject {
                 string: "\n+" + String(remainingCount) + " " + NSLocalizedString("more", comment: "TSBinancePositionService"),
                 attributes: mutedAttributes
             ))
-        } else if let updatedAt, !focused {
-            attributed.append(NSAttributedString(string: "\n" + relativeUpdateText(for: updatedAt), attributes: mutedAttributes))
         }
 
         return attributed
@@ -253,6 +248,7 @@ final class TSBinancePositionService: NSObject {
 
     private func configureAndStartIfNeeded(forceRestart: Bool) {
         let newConfig = loadConfig()
+        displayOptions = loadDisplayOptions()
 
         guard isStarted else {
             currentConfig = newConfig
@@ -315,14 +311,6 @@ final class TSBinancePositionService: NSObject {
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: TSBinancePositionServiceDidUpdateNotificationName, object: nil)
         }
-    }
-
-    private func relativeUpdateText(for date: Date) -> String {
-        let elapsed = max(Int(Date().timeIntervalSince(date)), 0)
-        if elapsed == 0 {
-            return NSLocalizedString("Updated just now", comment: "TSBinancePositionService")
-        }
-        return String(format: NSLocalizedString("Updated %ds ago", comment: "TSBinancePositionService"), elapsed)
     }
 
     private func refreshSnapshot(reason: String) {
@@ -399,9 +387,9 @@ final class TSBinancePositionService: NSObject {
             }
 
             return TSBinanceDisplayEntry(
-                symbol: position.symbol,
+                symbol: self.displaySymbol(for: position.symbol),
                 side: side,
-                quantity: trimDecimal(quantityMagnitude(from: quantity)),
+                quantity: self.trimDecimal(self.quantityMagnitude(from: quantity)),
                 pnl: signedString(for: pnl, suffix: ""),
                 roe: roe,
                 entryPrice: trimDecimalString(position.entryPrice),
@@ -520,7 +508,8 @@ final class TSBinancePositionService: NSObject {
     private func setupPeriodicSnapshotRefresh() {
         snapshotTimer?.cancel()
         let timer = DispatchSource.makeTimerSource(queue: workQueue)
-        timer.schedule(deadline: .now() + Self.snapshotRefreshInterval, repeating: Self.snapshotRefreshInterval)
+        let refreshInterval = max(displayOptions.snapshotRefreshInterval, 1)
+        timer.schedule(deadline: .now() + refreshInterval, repeating: refreshInterval)
         timer.setEventHandler { [weak self] in
             self?.refreshSnapshot(reason: "periodic")
         }
@@ -725,6 +714,77 @@ final class TSBinancePositionService: NSObject {
         return signature.map { String(format: "%02x", $0) }.joined()
     }
 
+    private func loadDisplayOptions() -> TSBinanceDisplayOptions {
+        let defaults = GetStandardUserDefaults()
+        let refreshInterval = defaults.double(forKey: HUDUserDefaultsKeyBinanceRefreshInterval)
+        return TSBinanceDisplayOptions(
+            showSymbol: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowSymbol),
+            showSide: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowSide),
+            showQuantity: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowQuantity),
+            showCurrentPrice: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowCurrentPrice),
+            showEntryPrice: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowEntryPrice),
+            showPnL: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowPnL),
+            showRoe: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowROE),
+            snapshotRefreshInterval: refreshInterval > 0 ? refreshInterval : Self.defaultSnapshotRefreshInterval
+        )
+    }
+
+    private static func defaultDisplayOptions() -> TSBinanceDisplayOptions {
+        TSBinanceDisplayOptions(
+            showSymbol: true,
+            showSide: true,
+            showQuantity: false,
+            showCurrentPrice: true,
+            showEntryPrice: false,
+            showPnL: true,
+            showRoe: false,
+            snapshotRefreshInterval: defaultSnapshotRefreshInterval
+        )
+    }
+
+    private func mainLineText(for entry: TSBinanceDisplayEntry, options: TSBinanceDisplayOptions) -> String {
+        var components: [String] = []
+
+        if options.showSymbol {
+            components.append(entry.symbol)
+        }
+        if options.showSide {
+            components.append(entry.side)
+        }
+        if options.showQuantity {
+            components.append("Q\(entry.quantity)")
+        }
+        if options.showCurrentPrice {
+            components.append("P\(entry.markPrice)")
+        }
+        if options.showPnL {
+            components.append(entry.pnl)
+        }
+
+        if components.isEmpty {
+            components.append(entry.symbol)
+        }
+
+        return components.joined(separator: " ")
+    }
+
+    private func secondaryLineText(for entry: TSBinanceDisplayEntry, options: TSBinanceDisplayOptions) -> String? {
+        var components: [String] = []
+
+        if options.showEntryPrice {
+            components.append("E \(entry.entryPrice)")
+        }
+        if options.showRoe, let roe = entry.roe {
+            components.append("ROE \(roe)")
+        }
+
+        guard !components.isEmpty else {
+            return nil
+        }
+
+        return components.joined(separator: "  ")
+    }
+
     private func decimal(from string: String) -> Decimal? {
         Decimal(string: string, locale: Locale(identifier: "en_US_POSIX"))
     }
@@ -768,5 +828,12 @@ final class TSBinancePositionService: NSObject {
 
     private func quantityMagnitude(from value: Decimal) -> Decimal {
         value < 0 ? (0 - value) : value
+    }
+
+    private func displaySymbol(for symbol: String) -> String {
+        if symbol.hasSuffix("USDT") {
+            return String(symbol.dropLast(4))
+        }
+        return symbol
     }
 }
