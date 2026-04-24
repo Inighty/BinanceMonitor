@@ -45,6 +45,8 @@
 		D1A0000A2E00000100000001 /* TSBinancePositionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A000022E00000100000001 /* TSBinancePositionService.swift */; };
 		D1A0000B2E00000100000001 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1A000032E00000100000001 /* Security.framework */; };
 		D1A0000C2E00000100000001 /* CryptoKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1A000042E00000100000001 /* CryptoKit.framework */; };
+		D1A0000D2E00000100000001 /* TSBinanceAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A0000F2E00000100000001 /* TSBinanceAccountViewController.swift */; };
+		D1A0000E2E00000100000001 /* TSBinanceAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A0000F2E00000100000001 /* TSBinanceAccountViewController.swift */; };
 		CC654E332DABD9C200D54F83 /* AppIntents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC8DDA982B66318E001C7C9E /* AppIntents.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		CC654E362DABD9C200D54F83 /* BackBoardServices.Sim.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC654E072DABD95200D54F83 /* BackBoardServices.Sim.tbd */; };
 		CC654E372DABD9C200D54F83 /* IOKit.Sim.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC654E052DABD94A00D54F83 /* IOKit.Sim.tbd */; };
@@ -161,6 +163,7 @@
 		D1A000022E00000100000001 /* TSBinancePositionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TSBinancePositionService.swift; sourceTree = "<group>"; };
 		D1A000032E00000100000001 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		D1A000042E00000100000001 /* CryptoKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoKit.framework; path = System/Library/Frameworks/CryptoKit.framework; sourceTree = SDKROOT; };
+		D1A0000F2E00000100000001 /* TSBinanceAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TSBinanceAccountViewController.swift; sourceTree = "<group>"; };
 		CC711D492B5BF5C6007235A6 /* MainButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainButton.h; sourceTree = "<group>"; };
 		CC711D662B5BF6B7007235A6 /* UIApplicationRotationFollowingControllerNoTouches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIApplicationRotationFollowingControllerNoTouches.h; sourceTree = "<group>"; };
 		CC711D672B5BF6B7007235A6 /* UITouch+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITouch+Private.h"; sourceTree = "<group>"; };
@@ -318,6 +321,7 @@
 				CC711D1F2B5BF5C6007235A6 /* RootViewController.mm */,
 				CC711D232B5BF5C6007235A6 /* TSEventFetcher.h */,
 				CC711D472B5BF5C6007235A6 /* TSEventFetcher.mm */,
+				D1A0000F2E00000100000001 /* TSBinanceAccountViewController.swift */,
 				D1A000012E00000100000001 /* TSBinanceCredentialStore.swift */,
 				D1A000022E00000100000001 /* TSBinancePositionService.swift */,
 				CC9130A62B62A33A006E3280 /* TSSettingsIndex.swift */,
@@ -559,6 +563,7 @@
 				CC654E212DABD9C200D54F83 /* ScreenshotInvisibleContainer.swift in Sources */,
 				CC654E222DABD9C200D54F83 /* ScreenshotInvincibleContainerProtocol.swift in Sources */,
 				CC654E232DABD9C200D54F83 /* SPLarkController.swift in Sources */,
+				D1A0000D2E00000100000001 /* TSBinanceAccountViewController.swift in Sources */,
 				D1A000092E00000100000001 /* TSBinanceCredentialStore.swift in Sources */,
 				D1A0000A2E00000100000001 /* TSBinancePositionService.swift in Sources */,
 				CC654E242DABD9C200D54F83 /* HUDApp.mm in Sources */,
@@ -601,6 +606,7 @@
 				CC711D5C2B5BF5C6007235A6 /* ScreenshotInvisibleContainer.swift in Sources */,
 				CC711D5D2B5BF5C6007235A6 /* ScreenshotInvincibleContainerProtocol.swift in Sources */,
 				CC711D562B5BF5C6007235A6 /* SPLarkController.swift in Sources */,
+				D1A0000E2E00000100000001 /* TSBinanceAccountViewController.swift in Sources */,
 				D1A000052E00000100000001 /* TSBinanceCredentialStore.swift in Sources */,
 				D1A000062E00000100000001 /* TSBinancePositionService.swift in Sources */,
 				CC711D642B5BF5C6007235A6 /* HUDApp.mm in Sources */,
