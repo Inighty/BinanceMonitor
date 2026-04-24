@@ -23,8 +23,6 @@ static const CGFloat _gTopButtonConstraintsConstantRegular = 28.f;
 static const CGFloat _gTopButtonConstraintsConstantRegularPad = 46.f;
 static const CGFloat _gAuthorLabelBottomConstraintConstantCompact = -20.f;
 static const CGFloat _gAuthorLabelBottomConstraintConstantRegular = -80.f;
-static const NSInteger _gBinanceAccountFieldTagAPIKey = 0;
-static const NSInteger _gBinanceAccountFieldTagAPISecret = 1;
 
 @implementation RootViewController {
     NSMutableDictionary *_userDefaults;
@@ -648,105 +646,20 @@ static const NSInteger _gBinanceAccountFieldTagAPISecret = 1;
 
 - (void)presentBinanceAccountEditor
 {
-    TSBinanceCredentialStore *store = [TSBinanceCredentialStore sharedStore];
+    TSBinanceAccountViewController *editorViewController = [[TSBinanceAccountViewController alloc] init];
+    editorViewController.delegate = self;
 
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Binance Account", nil) message:NSLocalizedString(@"Enter a read-only USD-M Futures API Key and Secret.", nil) preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-        textField.placeholder = NSLocalizedString(@"API Key", nil);
-        textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
-        textField.autocorrectionType = UITextAutocorrectionTypeNo;
-        textField.spellCheckingType = UITextSpellCheckingTypeNo;
-        textField.smartDashesType = UITextSmartDashesTypeNo;
-        textField.smartQuotesType = UITextSmartQuotesTypeNo;
-        textField.keyboardType = UIKeyboardTypeASCIICapable;
-        textField.clearButtonMode = UITextFieldViewModeWhileEditing;
-        textField.rightView = [self binancePasteButtonWithTag:_gBinanceAccountFieldTagAPIKey];
-        textField.rightViewMode = UITextFieldViewModeAlways;
-        textField.text = [store currentAPIKey];
-    }];
-    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-        textField.placeholder = NSLocalizedString(@"API Secret", nil);
-        textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
-        textField.autocorrectionType = UITextAutocorrectionTypeNo;
-        textField.spellCheckingType = UITextSpellCheckingTypeNo;
-        textField.smartDashesType = UITextSmartDashesTypeNo;
-        textField.smartQuotesType = UITextSmartQuotesTypeNo;
-        textField.keyboardType = UIKeyboardTypeASCIICapable;
-        textField.clearButtonMode = UITextFieldViewModeWhileEditing;
-        textField.rightView = [self binancePasteButtonWithTag:_gBinanceAccountFieldTagAPISecret];
-        textField.rightViewMode = UITextFieldViewModeAlways;
-        textField.secureTextEntry = YES;
-    }];
-
-    [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Dismiss", nil) style:UIAlertActionStyleCancel handler:nil]];
-
-    if ([store hasCredentials]) {
-        [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Clear API Credentials", nil) style:UIAlertActionStyleDestructive handler:^(__unused UIAlertAction * _Nonnull action) {
-            NSError *error = nil;
-            BOOL success = [store clearCredentials:&error];
-            if (!success) {
-                [self presentSettingsError:error];
-                return;
-            }
-
-            notify_post(NOTIFY_RELOAD_HUD);
-        }]];
-    }
-
-    [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Save", nil) style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction * _Nonnull action) {
-        NSString *apiKey = [alertController.textFields.firstObject.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        NSString *secretInput = [alertController.textFields.lastObject.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        NSString *secret = (secretInput.length > 0 ? secretInput : [store currentSecret]);
-        if (!secret) {
-            secret = @"";
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:editorViewController];
+    if (@available(iOS 15.0, *)) {
+        UISheetPresentationController *sheetController = navigationController.sheetPresentationController;
+        if (sheetController) {
+            sheetController.detents = @[UISheetPresentationControllerDetent.mediumDetent, UISheetPresentationControllerDetent.largeDetent];
+            sheetController.prefersGrabberVisible = YES;
+            sheetController.preferredCornerRadius = 24.0;
         }
-
-        NSError *error = nil;
-        BOOL success = [store saveAPIKey:apiKey secret:secret error:&error];
-        if (!success) {
-            [self presentSettingsError:error];
-            return;
-        }
-
-        notify_post(NOTIFY_RELOAD_HUD);
-    }]];
-
-    [self presentViewController:alertController animated:YES completion:nil];
-}
-
-- (UIButton * _Nonnull)binancePasteButtonWithTag:(NSInteger)tag
-{
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
-    [button setTitle:NSLocalizedString(@"Paste", nil) forState:UIControlStateNormal];
-    button.titleLabel.font = [UIFont systemFontOfSize:13.0 weight:UIFontWeightSemibold];
-    button.tag = tag;
-    button.contentEdgeInsets = UIEdgeInsetsMake(4.0, 8.0, 4.0, 8.0);
-    [button addTarget:self action:@selector(handleBinancePasteButton:) forControlEvents:UIControlEventTouchUpInside];
-    [button sizeToFit];
-    return button;
-}
-
-- (void)handleBinancePasteButton:(UIButton * _Nonnull)sender
-{
-    UIAlertController *alertController = (UIAlertController *)self.presentedViewController;
-    if (![alertController isKindOfClass:UIAlertController.class]) {
-        return;
     }
-
-    NSInteger fieldIndex = (sender.tag == _gBinanceAccountFieldTagAPISecret ? 1 : 0);
-    if (fieldIndex >= (NSInteger)alertController.textFields.count) {
-        return;
-    }
-
-    UITextField *textField = alertController.textFields[fieldIndex];
-    NSString *pasteboardString = [UIPasteboard generalPasteboard].string;
-    if (pasteboardString.length == 0) {
-        return;
-    }
-
-    textField.text = pasteboardString;
-    [textField sendActionsForControlEvents:UIControlEventEditingChanged];
-    [textField becomeFirstResponder];
+    navigationController.modalPresentationStyle = UIModalPresentationPageSheet;
+    [self presentViewController:navigationController animated:YES completion:nil];
 }
 
 - (void)presentSettingsError:(NSError *)error
@@ -755,6 +668,12 @@ static const NSInteger _gBinanceAccountFieldTagAPISecret = 1;
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Binance Settings Error", nil) message:message preferredStyle:UIAlertControllerStyleAlert];
     [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Dismiss", nil) style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:alertController animated:YES completion:nil];
+}
+
+- (void)binanceAccountViewControllerDidUpdateCredentials:(TSBinanceAccountViewController * _Nonnull)controller
+{
+    (void)controller;
+    notify_post(NOTIFY_RELOAD_HUD);
 }
 
 - (void)reloadModeButtonState

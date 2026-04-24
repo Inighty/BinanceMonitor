@@ -17,7 +17,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RootViewController : UIViewController <TSSettingsControllerDelegate>
+@interface RootViewController : UIViewController <TSSettingsControllerDelegate, TSBinanceAccountViewControllerDelegate>
 @property (nonatomic, strong) UIView *backgroundView;
 + (void)setShouldToggleHUDAfterLaunch:(BOOL)flag;
 - (void)reloadMainButtonState;
