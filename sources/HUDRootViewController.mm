@@ -15,7 +15,13 @@
 #import "HUDPresetPosition.h"
 #import "HUDRootViewController.h"
 #import "HUDBackdropLabel.h"
+#if __has_include("BinanceHUD-Swift.h")
+#import "BinanceHUD-Swift.h"
+#elif __has_include("TrollSpeed-Swift.h")
 #import "TrollSpeed-Swift.h"
+#else
+#error "Swift compatibility header not found"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
