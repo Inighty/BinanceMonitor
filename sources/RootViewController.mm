@@ -23,6 +23,8 @@ static const CGFloat _gTopButtonConstraintsConstantRegular = 28.f;
 static const CGFloat _gTopButtonConstraintsConstantRegularPad = 46.f;
 static const CGFloat _gAuthorLabelBottomConstraintConstantCompact = -20.f;
 static const CGFloat _gAuthorLabelBottomConstraintConstantRegular = -80.f;
+static const NSInteger _gBinanceAccountFieldTagAPIKey = 0;
+static const NSInteger _gBinanceAccountFieldTagAPISecret = 1;
 
 @implementation RootViewController {
     NSMutableDictionary *_userDefaults;
@@ -653,18 +655,27 @@ static const CGFloat _gAuthorLabelBottomConstraintConstantRegular = -80.f;
         textField.placeholder = NSLocalizedString(@"API Key", nil);
         textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
         textField.autocorrectionType = UITextAutocorrectionTypeNo;
+        textField.spellCheckingType = UITextSpellCheckingTypeNo;
+        textField.smartDashesType = UITextSmartDashesTypeNo;
+        textField.smartQuotesType = UITextSmartQuotesTypeNo;
+        textField.keyboardType = UIKeyboardTypeASCIICapable;
         textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+        textField.rightView = [self binancePasteButtonWithTag:_gBinanceAccountFieldTagAPIKey];
+        textField.rightViewMode = UITextFieldViewModeAlways;
         textField.text = [store currentAPIKey];
     }];
     [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
         textField.placeholder = NSLocalizedString(@"API Secret", nil);
         textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
         textField.autocorrectionType = UITextAutocorrectionTypeNo;
+        textField.spellCheckingType = UITextSpellCheckingTypeNo;
+        textField.smartDashesType = UITextSmartDashesTypeNo;
+        textField.smartQuotesType = UITextSmartQuotesTypeNo;
+        textField.keyboardType = UIKeyboardTypeASCIICapable;
         textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+        textField.rightView = [self binancePasteButtonWithTag:_gBinanceAccountFieldTagAPISecret];
+        textField.rightViewMode = UITextFieldViewModeAlways;
         textField.secureTextEntry = YES;
-        if (@available(iOS 12.0, *)) {
-            textField.textContentType = UITextContentTypePassword;
-        }
     }];
 
     [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Dismiss", nil) style:UIAlertActionStyleCancel handler:nil]];
@@ -701,6 +712,41 @@ static const CGFloat _gAuthorLabelBottomConstraintConstantRegular = -80.f;
     }]];
 
     [self presentViewController:alertController animated:YES completion:nil];
+}
+
+- (UIButton * _Nonnull)binancePasteButtonWithTag:(NSInteger)tag
+{
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
+    [button setTitle:NSLocalizedString(@"Paste", nil) forState:UIControlStateNormal];
+    button.titleLabel.font = [UIFont systemFontOfSize:13.0 weight:UIFontWeightSemibold];
+    button.tag = tag;
+    button.contentEdgeInsets = UIEdgeInsetsMake(4.0, 8.0, 4.0, 8.0);
+    [button addTarget:self action:@selector(handleBinancePasteButton:) forControlEvents:UIControlEventTouchUpInside];
+    [button sizeToFit];
+    return button;
+}
+
+- (void)handleBinancePasteButton:(UIButton * _Nonnull)sender
+{
+    UIAlertController *alertController = (UIAlertController *)self.presentedViewController;
+    if (![alertController isKindOfClass:UIAlertController.class]) {
+        return;
+    }
+
+    NSInteger fieldIndex = (sender.tag == _gBinanceAccountFieldTagAPISecret ? 1 : 0);
+    if (fieldIndex >= (NSInteger)alertController.textFields.count) {
+        return;
+    }
+
+    UITextField *textField = alertController.textFields[fieldIndex];
+    NSString *pasteboardString = [UIPasteboard generalPasteboard].string;
+    if (pasteboardString.length == 0) {
+        return;
+    }
+
+    textField.text = pasteboardString;
+    [textField sendActionsForControlEvents:UIControlEventEditingChanged];
+    [textField becomeFirstResponder];
 }
 
 - (void)presentSettingsError:(NSError *)error
