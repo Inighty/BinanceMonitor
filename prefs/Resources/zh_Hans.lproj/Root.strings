@@ -1,11 +1,9 @@
 "Appearance" = "外观";
-
 "Custom Font Size" = "自定义字体大小";
-
 "Uses Custom Font Size" = "使用自定义字体大小";
-
-"Custom Offset" = "自定义偏移位置";
-
-"Uses Custom Offset" = "使用自定义偏移位置";
-
+"Custom Offset" = "自定义偏移";
+"Uses Custom Offset" = "使用自定义偏移";
+"Custom Offset X" = "自定义横向偏移";
+"Custom Offset Y" = "自定义纵向偏移";
+"Made with ♥ by @Lessica and @jmpews" = "由 @Lessica 和 @jmpews 制作";
 "Reset to Default" = "重置为默认值";

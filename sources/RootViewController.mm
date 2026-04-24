@@ -52,6 +52,20 @@ static BOOL IsBinanceStandardToggleKey(NSString * _Nonnull key)
     return [keys containsObject:key];
 }
 
+static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
+{
+    BOOL removed = NO;
+    for (NSString *key in @[ @"singleLineMode", @"usesBitrate", @"usesArrowPrefixes", @"displayMode" ])
+    {
+        if ([userDefaults objectForKey:key] != nil)
+        {
+            [userDefaults removeObjectForKey:key];
+            removed = YES;
+        }
+    }
+    return removed;
+}
+
 @implementation RootViewController {
     NSMutableDictionary *_userDefaults;
     MainButton *_mainButton;
@@ -366,6 +380,9 @@ static BOOL IsBinanceStandardToggleKey(NSString * _Nonnull key)
 {
     if (forceReload || !_userDefaults) {
         _userDefaults = [[NSDictionary dictionaryWithContentsOfFile:(JBROOT_PATH_NSSTRING(USER_DEFAULTS_PATH))] mutableCopy] ?: [NSMutableDictionary dictionary];
+        if (RemoveObsoleteHUDKeys(_userDefaults)) {
+            [_userDefaults writeToFile:(JBROOT_PATH_NSSTRING(USER_DEFAULTS_PATH)) atomically:YES];
+        }
     }
 }
 
@@ -424,48 +441,6 @@ static BOOL IsBinanceStandardToggleKey(NSString * _Nonnull key)
 {
     [self loadUserDefaults:NO];
     [_userDefaults setObject:@(passthroughMode) forKey:HUDUserDefaultsKeyPassthroughMode];
-    [self saveUserDefaults];
-}
-
-- (BOOL)singleLineMode
-{
-    [self loadUserDefaults:NO];
-    NSNumber *mode = [_userDefaults objectForKey:HUDUserDefaultsKeySingleLineMode];
-    return mode != nil ? [mode boolValue] : NO;
-}
-
-- (void)setSingleLineMode:(BOOL)singleLineMode
-{
-    [self loadUserDefaults:NO];
-    [_userDefaults setObject:@(singleLineMode) forKey:HUDUserDefaultsKeySingleLineMode];
-    [self saveUserDefaults];
-}
-
-- (BOOL)usesBitrate
-{
-    [self loadUserDefaults:NO];
-    NSNumber *mode = [_userDefaults objectForKey:HUDUserDefaultsKeyUsesBitrate];
-    return mode != nil ? [mode boolValue] : NO;
-}
-
-- (void)setUsesBitrate:(BOOL)usesBitrate
-{
-    [self loadUserDefaults:NO];
-    [_userDefaults setObject:@(usesBitrate) forKey:HUDUserDefaultsKeyUsesBitrate];
-    [self saveUserDefaults];
-}
-
-- (BOOL)usesArrowPrefixes
-{
-    [self loadUserDefaults:NO];
-    NSNumber *mode = [_userDefaults objectForKey:HUDUserDefaultsKeyUsesArrowPrefixes];
-    return mode != nil ? [mode boolValue] : NO;
-}
-
-- (void)setUsesArrowPrefixes:(BOOL)usesArrowPrefixes
-{
-    [self loadUserDefaults:NO];
-    [_userDefaults setObject:@(usesArrowPrefixes) forKey:HUDUserDefaultsKeyUsesArrowPrefixes];
     [self saveUserDefaults];
 }
 
@@ -536,20 +511,6 @@ static BOOL IsBinanceStandardToggleKey(NSString * _Nonnull key)
 {
     [self loadUserDefaults:NO];
     [_userDefaults setObject:@(hideAtSnapshot) forKey:HUDUserDefaultsKeyHideAtSnapshot];
-    [self saveUserDefaults];
-}
-
-- (BOOL)displayMode
-{
-    [self loadUserDefaults:NO];
-    NSNumber *mode = [_userDefaults objectForKey:HUDUserDefaultsKeyDisplayMode];
-    return mode != nil ? [mode boolValue] : NO;
-}
-
-- (void)setDisplayMode:(BOOL)displayMode
-{
-    [self loadUserDefaults:NO];
-    [_userDefaults setObject:@(displayMode) forKey:HUDUserDefaultsKeyDisplayMode];
     [self saveUserDefaults];
 }
 

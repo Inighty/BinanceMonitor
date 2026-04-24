@@ -1,200 +1,75 @@
-/* formattedSpeed */
-"%.0f KB" = "%.0f KB";
-
-/* formattedSpeed */
-"%.0f Kb" = "%.0f Kb";
-
-/* formattedSpeed */
-"%.0f Kb/s" = "%.0f Kb/s";
-
-/* formattedSpeed */
-"%.0f KB/s" = "%.0f KB/s";
-
-/* formattedSpeed */
-"%.2f GB" = "%.2f GB";
-
-/* formattedSpeed */
-"%.2f Gb" = "%.2f Gb";
-
-/* formattedSpeed */
-"%.2f GB/s" = "%.2f GB/s";
-
-/* formattedSpeed */
-"%.2f Gb/s" = "%.2f Gb/s";
-
-/* formattedSpeed */
-"%.2f MB" = "%.2f MB";
-
-/* formattedSpeed */
-"%.2f Mb" = "%.2f Mb";
-
-/* formattedSpeed */
-"%.2f MB/s" = "%.2f MB/s";
-
-/* formattedSpeed */
-"%.2f Mb/s" = "%.2f Mb/s";
-
-/* formattedSpeed */
-"0 KB" = "0 KB";
-
-/* formattedSpeed */
-"0 Kb" = "0 Kb";
-
-/* formattedSpeed */
-"0 Kb/s" = "0 Kb/s";
-
-/* formattedSpeed */
-"0 KB/s" = "0 KB/s";
-
-/* No comment provided by engineer. */
-"Activate the network speed HUD." = "Activate the Binance futures position HUD.";
-
-/* No comment provided by engineer. */
-"Appearance" = "Appearance";
-
-/* No comment provided by engineer. */
-"b/s" = "b/s";
-
-/* No comment provided by engineer. */
-"B/s" = "B/s";
-
-/* No comment provided by engineer. */
-"Choose an action below." = "Choose an action below.";
-
-/* No comment provided by engineer. */
-"Classic" = "Classic";
-
-/* No comment provided by engineer. */
-"Deactivate the network speed HUD." = "Deactivate the Binance futures position HUD.";
-
-/* No comment provided by engineer. */
-"Developer Area" = "Developer Area";
-
-/* No comment provided by engineer. */
-"Dismiss" = "Dismiss";
-
-/* No comment provided by engineer. */
-"Display Mode" = "Display Mode";
-
-/* No comment provided by engineer. */
-"Exit HUD" = "Exit HUD";
-
-/* No comment provided by engineer. */
-"Follow" = "Follow";
-
-/* No comment provided by engineer. */
-"FPS" = "FPS";
-
-/* No comment provided by engineer. */
-"Hide" = "Hide";
-
-/* No comment provided by engineer. */
-"Hide @snapshot" = "Hide @snapshot";
-
-/* No comment provided by engineer. */
-"Incoming Only" = "Incoming Only";
-
-/* No comment provided by engineer. */
-"Inverted" = "Inverted";
-
-/* No comment provided by engineer. */
-"Keep In-place" = "Keep In-place";
-
-/* No comment provided by engineer. */
-"Landscape" = "Landscape";
-
-/* No comment provided by engineer. */
-"Large" = "Large";
-
-/* No comment provided by engineer. */
-"Made with ♥ by @GITHUB@Lessica and @GITHUB@jmpews\nTranslation @TRANSLATION@" = "Made with ♥ by @GITHUB@Lessica and @GITHUB@jmpews";
-
-/* No comment provided by engineer. */
-"Memory Pressure" = "Memory Pressure";
-
-/* No comment provided by engineer. */
-"OFF" = "OFF";
-
-/* No comment provided by engineer. */
-"ON" = "ON";
-
-/* No comment provided by engineer. */
-"Open HUD" = "Open HUD";
-
-/* No comment provided by engineer. */
-"Pass-through" = "Pass-through";
-
-/* No comment provided by engineer. */
-"Prefixes" = "Prefixes";
-
-/* No comment provided by engineer. */
-"Re-open to apply" = "Re-open to apply";
-
-/* No comment provided by engineer. */
-"Reset Settings" = "Reset Settings";
-
-/* No comment provided by engineer. */
-"Settings" = "Settings";
-
-/* No comment provided by engineer. */
-"Size" = "Size";
-
-/* No comment provided by engineer. */
-"Speed" = "Speed";
-
-/* No comment provided by engineer. */
-"Standard" = "Standard";
-
-/* No comment provided by engineer. */
-"Tap that button on the center again,\nto toggle ON/OFF “Dynamic Island” mode." = "Tap that button on the center again,\nto toggle ON/OFF “Dynamic Island” mode.";
-
-/* No comment provided by engineer. */
-"Toggle HUD" = "Toggle HUD";
-
-/* No comment provided by engineer. */
-"Toggle the network speed HUD." = "Toggle the Binance futures position HUD.";
-
-/* No comment provided by engineer. */
-"Unit" = "Unit";
-
-/* No comment provided by engineer. */
-"Utility" = "Utility";
-
-/* No comment provided by engineer. */
-"You can quit this app now.\nThe HUD will persist on your screen." = "You can quit this app now.\nThe HUD will persist on your screen.";
-
-/* No comment provided by engineer. */
-"↑↓" = "↑↓";
-
-/* No comment provided by engineer. */
-"▲▼" = "▲▼";
-
-/* Binance settings */
-"Activate the Binance futures position HUD." = "Activate the Binance futures position HUD.";
+"%ds" = "%ds";
 "API Key" = "API Key";
 "API Key cannot be empty." = "API Key cannot be empty.";
 "API Secret" = "API Secret";
 "API Secret cannot be empty." = "API Secret cannot be empty.";
-"Binance Account" = "Binance Account";
+"Activate the Binance futures position HUD." = "Activate the Binance futures position HUD.";
+"An unknown error occurred." = "An unknown error occurred.";
+"Appearance" = "Appearance";
 "Binance API not configured" = "Binance API not configured";
-"Binance authentication failed" = "Binance authentication failed";
+"Binance Account" = "Binance Account";
 "Binance Environment" = "Binance Environment";
-"Binance network unavailable" = "Binance network unavailable";
 "Binance Settings Error" = "Binance Settings Error";
+"Binance authentication failed" = "Binance authentication failed";
+"Binance network unavailable" = "Binance network unavailable";
+"Cancel" = "Cancel";
+"Choose an action below." = "Choose an action below.";
+"Classic" = "Classic";
+"Clear" = "Clear";
 "Clear API Credentials" = "Clear API Credentials";
+"Clear Saved Credentials" = "Clear Saved Credentials";
+"Clipboard is empty or paste access was denied." = "Clipboard is empty or paste access was denied.";
 "Configured" = "Configured";
 "Deactivate the Binance futures position HUD." = "Deactivate the Binance futures position HUD.";
-"Enter a read-only USD-M Futures API Key and Secret." = "Enter a read-only USD-M Futures API Key and Secret.";
+"Developer Area" = "Developer Area";
+"Dismiss" = "Dismiss";
+"Enter a read-only USD-M Futures API Key and Secret. Use the buttons below to paste directly from the clipboard." = "Enter a read-only USD-M Futures API Key and Secret. Use the buttons below to paste directly from the clipboard.";
+"Exit HUD" = "Exit HUD";
+"Follow" = "Follow";
+"Hide" = "Hide";
+"Hide @snapshot" = "Hide @snapshot";
+"Hide Secret" = "Hide Secret";
+"Inverted" = "Inverted";
+"Keep In-place" = "Keep In-place";
+"Landscape" = "Landscape";
+"Large" = "Large";
+"Leave blank to keep current secret" = "Leave blank to keep current secret";
 "Loading Binance positions..." = "Loading Binance positions...";
+"Made with ♥ by @GITHUB@Lessica and @GITHUB@jmpews\nTranslation @TRANSLATION@" = "Made with ♥ by @GITHUB@Lessica and @GITHUB@jmpews\nTranslation @TRANSLATION@";
 "Mainnet" = "Mainnet";
+"Memory Pressure" = "Memory Pressure";
 "No open futures positions" = "No open futures positions";
 "Not Configured" = "Not Configured";
+"OFF" = "OFF";
+"ON" = "ON";
+"Open HUD" = "Open HUD";
 "Open Settings to add API Key and Secret" = "Open Settings to add API Key and Secret";
+"Pass-through" = "Pass-through";
+"Paste API Key" = "Paste API Key";
+"Paste API Secret" = "Paste API Secret";
+"Re-open to apply" = "Re-open to apply";
+"Refresh Interval" = "Refresh Interval";
+"Reset Settings" = "Reset Settings";
 "Save" = "Save";
+"Settings" = "Settings";
+"Show Current Price" = "Show Current Price";
+"Show Entry Price" = "Show Entry Price";
+"Show PnL" = "Show PnL";
+"Show Quantity" = "Show Quantity";
+"Show ROE" = "Show ROE";
+"Show Secret" = "Show Secret";
+"Show Side" = "Show Side";
+"Show Symbol" = "Show Symbol";
+"Size" = "Size";
+"Standard" = "Standard";
+"Tap that button on the center again,\nto toggle ON/OFF “Dynamic Island” mode." = "Tap that button on the center again,\nto toggle ON/OFF “Dynamic Island” mode.";
 "Testnet" = "Testnet";
+"This will remove the saved Binance API Key and Secret from the device." = "This will remove the saved Binance API Key and Secret from the device.";
+"Toggle HUD" = "Toggle HUD";
 "Toggle the Binance futures position HUD." = "Toggle the Binance futures position HUD.";
+"Unable to clear saved credentials." = "Unable to clear saved credentials.";
 "Unable to decode Binance positions" = "Unable to decode Binance positions";
 "Unable to load Binance positions" = "Unable to load Binance positions";
-"Updated %ds ago" = "Updated %ds ago";
-"Updated just now" = "Updated just now";
+"Utility" = "Utility";
+"You can quit this app now.\nThe HUD will persist on your screen." = "You can quit this app now.\nThe HUD will persist on your screen.";
 "more" = "more";
