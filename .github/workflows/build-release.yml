@@ -50,8 +50,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          repository: Lessica/TrollSpeed
-          ref: main
           path: TrollSpeed
           submodules: recursive
 
@@ -74,23 +72,23 @@ jobs:
       - name: Collect symbols
         run: |
           cd $GITHUB_WORKSPACE/TrollSpeed
-          find .theos/obj -name "*.dSYM" -print | zip -r packages/TrollSpeed_${{ env.PKG_VERSION }}_symbols.zip -@
+          find .theos/obj -name "*.dSYM" -print | zip -r packages/BinanceHUD_${{ env.PKG_VERSION }}_symbols.zip -@
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: TrollSpeed_${{ env.PKG_VERSION }}
+          name: BinanceHUD_${{ env.PKG_VERSION }}
           path: |
-            TrollSpeed/packages/TrollSpeed_*.tipa
-            TrollSpeed/packages/TrollSpeed+AppIntents16_*.tipa
-            TrollSpeed/packages/ch.xxtou.hudapp.jb_*.deb
+            TrollSpeed/packages/BinanceHUD_*.tipa
+            TrollSpeed/packages/BinanceHUD+AppIntents16_*.tipa
+            TrollSpeed/packages/com.inighty.binancehud.jb_*.deb
 
       - name: Upload symbols
         uses: actions/upload-artifact@v4
         with:
-          name: TrollSpeed_${{ env.PKG_VERSION }}_symbols
+          name: BinanceHUD_${{ env.PKG_VERSION }}_symbols
           path: |
-            TrollSpeed/packages/TrollSpeed_${{ env.PKG_VERSION }}_symbols.zip
+            TrollSpeed/packages/BinanceHUD_${{ env.PKG_VERSION }}_symbols.zip
 
       - name: Upload release
         uses: softprops/action-gh-release@v1
@@ -98,6 +96,6 @@ jobs:
           tag_name: v${{ env.PKG_VERSION }}
           body_path: TrollSpeed/CHANGELOG.md
           files: |
-            TrollSpeed/packages/TrollSpeed_*.tipa
-            TrollSpeed/packages/TrollSpeed+AppIntents16_*.tipa
-            TrollSpeed/packages/ch.xxtou.hudapp.jb_*.deb
+            TrollSpeed/packages/BinanceHUD_*.tipa
+            TrollSpeed/packages/BinanceHUD+AppIntents16_*.tipa
+            TrollSpeed/packages/com.inighty.binancehud.jb_*.deb
