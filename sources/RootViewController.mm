@@ -646,14 +646,14 @@ static const CGFloat _gAuthorLabelBottomConstraintConstantRegular = -80.f;
     TSBinanceCredentialStore *store = [TSBinanceCredentialStore sharedStore];
 
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Binance Account", nil) message:NSLocalizedString(@"Enter a read-only USD-M Futures API Key and Secret.", nil) preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addTextField:^(UITextField * _Nonnull textField) {
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
         textField.placeholder = NSLocalizedString(@"API Key", nil);
         textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
         textField.autocorrectionType = UITextAutocorrectionTypeNo;
         textField.clearButtonMode = UITextFieldViewModeWhileEditing;
         textField.text = [store currentAPIKey];
     }];
-    [alertController addTextField:^(UITextField * _Nonnull textField) {
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
         textField.placeholder = NSLocalizedString(@"API Secret", nil);
         textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
         textField.autocorrectionType = UITextAutocorrectionTypeNo;
