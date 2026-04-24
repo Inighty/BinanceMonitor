@@ -44,15 +44,15 @@ final class TSBinanceAccountViewController: UIViewController {
         secure: true
     )
 
-    private lazy var apiKeyPasteButton: UIButton = makeActionButton(
+    private lazy var apiKeyPasteControl: UIView = makePasteControl(
+        for: apiKeyField,
         title: NSLocalizedString("Paste API Key", comment: "TSBinanceAccountViewController"),
-        tintColor: view.tintColor,
         action: #selector(pasteAPIKey)
     )
 
-    private lazy var secretPasteButton: UIButton = makeActionButton(
+    private lazy var secretPasteControl: UIView = makePasteControl(
+        for: secretField,
         title: NSLocalizedString("Paste API Secret", comment: "TSBinanceAccountViewController"),
-        tintColor: view.tintColor,
         action: #selector(pasteSecret)
     )
 
@@ -90,6 +90,9 @@ final class TSBinanceAccountViewController: UIViewController {
             action: #selector(saveCredentials)
         )
 
+        apiKeyField.pasteConfiguration = UIPasteConfiguration(forAccepting: NSString.self)
+        secretField.pasteConfiguration = UIPasteConfiguration(forAccepting: NSString.self)
+
         apiKeyField.text = store.currentAPIKey()
         if hasStoredCredentials {
             secretField.placeholder = NSLocalizedString("Leave blank to keep current secret", comment: "TSBinanceAccountViewController")
@@ -118,12 +121,12 @@ final class TSBinanceAccountViewController: UIViewController {
         contentStack.addArrangedSubview(makeFieldSection(
             title: NSLocalizedString("API Key", comment: "TSBinanceAccountViewController"),
             textField: apiKeyField,
-            buttons: [apiKeyPasteButton]
+            buttons: [apiKeyPasteControl]
         ))
         contentStack.addArrangedSubview(makeFieldSection(
             title: NSLocalizedString("API Secret", comment: "TSBinanceAccountViewController"),
             textField: secretField,
-            buttons: [secretPasteButton, secretVisibilityButton]
+            buttons: [secretPasteControl, secretVisibilityButton]
         ))
         if hasStoredCredentials {
             contentStack.addArrangedSubview(clearCredentialsButton)
@@ -139,7 +142,7 @@ final class TSBinanceAccountViewController: UIViewController {
         }
     }
 
-    private func makeFieldSection(title: String, textField: UITextField, buttons: [UIButton]) -> UIView {
+    private func makeFieldSection(title: String, textField: UITextField, buttons: [UIView]) -> UIView {
         let sectionView = UIView()
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -202,6 +205,24 @@ final class TSBinanceAccountViewController: UIViewController {
         button.heightAnchor.constraint(equalToConstant: 44).isActive = true
         button.addTarget(self, action: action, for: .touchUpInside)
         return button
+    }
+
+    private func makePasteControl(for textField: UITextField, title: String, action: Selector) -> UIView {
+        if #available(iOS 16.0, *) {
+            let configuration = UIPasteControl.Configuration()
+            configuration.baseBackgroundColor = view.tintColor.withAlphaComponent(0.08)
+            configuration.baseForegroundColor = view.tintColor
+            configuration.cornerStyle = .medium
+            configuration.displayMode = .labelOnly
+
+            let pasteControl = UIPasteControl(configuration: configuration)
+            pasteControl.translatesAutoresizingMaskIntoConstraints = false
+            pasteControl.target = textField
+            pasteControl.heightAnchor.constraint(equalToConstant: 44).isActive = true
+            return pasteControl
+        }
+
+        return makeActionButton(title: title, tintColor: view.tintColor, action: action)
     }
 
     @objc
