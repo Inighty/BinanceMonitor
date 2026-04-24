@@ -41,6 +41,10 @@
 		CC654E2D2DABD9C200D54F83 /* SPLarkTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC711D382B5BF5C6007235A6 /* SPLarkTransitioningDelegate.swift */; };
 		CC654E2E2DABD9C200D54F83 /* SPLarkSettingsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC711D322B5BF5C6007235A6 /* SPLarkSettingsCollectionViewCell.swift */; };
 		CC654E2F2DABD9C200D54F83 /* HUDMainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC711D202B5BF5C6007235A6 /* HUDMainWindow.mm */; };
+		D1A000092E00000100000001 /* TSBinanceCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A000012E00000100000001 /* TSBinanceCredentialStore.swift */; };
+		D1A0000A2E00000100000001 /* TSBinancePositionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A000022E00000100000001 /* TSBinancePositionService.swift */; };
+		D1A0000B2E00000100000001 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1A000032E00000100000001 /* Security.framework */; };
+		D1A0000C2E00000100000001 /* CryptoKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1A000042E00000100000001 /* CryptoKit.framework */; };
 		CC654E332DABD9C200D54F83 /* AppIntents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC8DDA982B66318E001C7C9E /* AppIntents.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		CC654E362DABD9C200D54F83 /* BackBoardServices.Sim.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC654E072DABD95200D54F83 /* BackBoardServices.Sim.tbd */; };
 		CC654E372DABD9C200D54F83 /* IOKit.Sim.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC654E052DABD94A00D54F83 /* IOKit.Sim.tbd */; };
@@ -80,6 +84,10 @@
 		CC711D622B5BF5C6007235A6 /* TSSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC711D462B5BF5C6007235A6 /* TSSettingsController.swift */; };
 		CC711D632B5BF5C6007235A6 /* TSEventFetcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC711D472B5BF5C6007235A6 /* TSEventFetcher.mm */; };
 		CC711D642B5BF5C6007235A6 /* HUDApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC711D482B5BF5C6007235A6 /* HUDApp.mm */; };
+		D1A000052E00000100000001 /* TSBinanceCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A000012E00000100000001 /* TSBinanceCredentialStore.swift */; };
+		D1A000062E00000100000001 /* TSBinancePositionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A000022E00000100000001 /* TSBinancePositionService.swift */; };
+		D1A000072E00000100000001 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1A000032E00000100000001 /* Security.framework */; };
+		D1A000082E00000100000001 /* CryptoKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1A000042E00000100000001 /* CryptoKit.framework */; };
 		CC711D852B5BFCC4007235A6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CC711D872B5BFCC4007235A6 /* Localizable.strings */; };
 		CC711D8C2B5BFD50007235A6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CC711D8E2B5BFD50007235A6 /* InfoPlist.strings */; };
 		CC711D932B5BFE6A007235A6 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CC711D922B5BFE66007235A6 /* icon.png */; };
@@ -149,6 +157,10 @@
 		CC711D462B5BF5C6007235A6 /* TSSettingsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TSSettingsController.swift; sourceTree = "<group>"; };
 		CC711D472B5BF5C6007235A6 /* TSEventFetcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TSEventFetcher.mm; sourceTree = "<group>"; };
 		CC711D482B5BF5C6007235A6 /* HUDApp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HUDApp.mm; sourceTree = "<group>"; };
+		D1A000012E00000100000001 /* TSBinanceCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TSBinanceCredentialStore.swift; sourceTree = "<group>"; };
+		D1A000022E00000100000001 /* TSBinancePositionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TSBinancePositionService.swift; sourceTree = "<group>"; };
+		D1A000032E00000100000001 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		D1A000042E00000100000001 /* CryptoKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoKit.framework; path = System/Library/Frameworks/CryptoKit.framework; sourceTree = SDKROOT; };
 		CC711D492B5BF5C6007235A6 /* MainButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainButton.h; sourceTree = "<group>"; };
 		CC711D662B5BF6B7007235A6 /* UIApplicationRotationFollowingControllerNoTouches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIApplicationRotationFollowingControllerNoTouches.h; sourceTree = "<group>"; };
 		CC711D672B5BF6B7007235A6 /* UITouch+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITouch+Private.h"; sourceTree = "<group>"; };
@@ -206,6 +218,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1A0000C2E00000100000001 /* CryptoKit.framework in Frameworks */,
+				D1A0000B2E00000100000001 /* Security.framework in Frameworks */,
 				CC654E332DABD9C200D54F83 /* AppIntents.framework in Frameworks */,
 				CC654E362DABD9C200D54F83 /* BackBoardServices.Sim.tbd in Frameworks */,
 				CC654E372DABD9C200D54F83 /* IOKit.Sim.tbd in Frameworks */,
@@ -219,6 +233,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1A000082E00000100000001 /* CryptoKit.framework in Frameworks */,
+				D1A000072E00000100000001 /* Security.framework in Frameworks */,
 				CC711D992B5BFF2F007235A6 /* SpringBoardServices.tbd in Frameworks */,
 				CC711D9E2B5C0081007235A6 /* AssertionServices.tbd in Frameworks */,
 				CC8DDA9A2B6631DC001C7C9E /* AppIntents.framework in Frameworks */,
@@ -302,6 +318,8 @@
 				CC711D1F2B5BF5C6007235A6 /* RootViewController.mm */,
 				CC711D232B5BF5C6007235A6 /* TSEventFetcher.h */,
 				CC711D472B5BF5C6007235A6 /* TSEventFetcher.mm */,
+				D1A000012E00000100000001 /* TSBinanceCredentialStore.swift */,
+				D1A000022E00000100000001 /* TSBinancePositionService.swift */,
 				CC9130A62B62A33A006E3280 /* TSSettingsIndex.swift */,
 				CC711D462B5BF5C6007235A6 /* TSSettingsController.swift */,
 			);
@@ -410,6 +428,8 @@
 			isa = PBXGroup;
 			children = (
 				CC8DDA982B66318E001C7C9E /* AppIntents.framework */,
+				D1A000042E00000100000001 /* CryptoKit.framework */,
+				D1A000032E00000100000001 /* Security.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -539,6 +559,8 @@
 				CC654E212DABD9C200D54F83 /* ScreenshotInvisibleContainer.swift in Sources */,
 				CC654E222DABD9C200D54F83 /* ScreenshotInvincibleContainerProtocol.swift in Sources */,
 				CC654E232DABD9C200D54F83 /* SPLarkController.swift in Sources */,
+				D1A000092E00000100000001 /* TSBinanceCredentialStore.swift in Sources */,
+				D1A0000A2E00000100000001 /* TSBinancePositionService.swift in Sources */,
 				CC654E242DABD9C200D54F83 /* HUDApp.mm in Sources */,
 				CC654E252DABD9C200D54F83 /* IOHIDEvent+KIF.m in Sources */,
 				CC654E262DABD9C200D54F83 /* DeactivateHUDIntent.swift in Sources */,
@@ -579,6 +601,8 @@
 				CC711D5C2B5BF5C6007235A6 /* ScreenshotInvisibleContainer.swift in Sources */,
 				CC711D5D2B5BF5C6007235A6 /* ScreenshotInvincibleContainerProtocol.swift in Sources */,
 				CC711D562B5BF5C6007235A6 /* SPLarkController.swift in Sources */,
+				D1A000052E00000100000001 /* TSBinanceCredentialStore.swift in Sources */,
+				D1A000062E00000100000001 /* TSBinancePositionService.swift in Sources */,
 				CC711D642B5BF5C6007235A6 /* HUDApp.mm in Sources */,
 				CC711D502B5BF5C6007235A6 /* IOHIDEvent+KIF.m in Sources */,
 				CC8DDA922B655156001C7C9E /* DeactivateHUDIntent.swift in Sources */,

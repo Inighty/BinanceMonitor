@@ -13,7 +13,7 @@ struct DeactivateHUDIntent: AppIntent {
     static let title: LocalizedStringResource = "Exit HUD"
 
     static let description = IntentDescription(
-        "Deactivate the network speed HUD.",
+        "Deactivate the Binance futures position HUD.",
         categoryName: "Utility",
         searchKeywords: [
             "deactivate",

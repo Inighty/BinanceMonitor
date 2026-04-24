@@ -168,3 +168,33 @@
 
 /* No comment provided by engineer. */
 "▲▼" = "▲▼";
+
+/* Binance settings */
+"Activate the Binance futures position HUD." = "打开币安合约持仓悬浮窗。";
+"API Key" = "API Key";
+"API Key cannot be empty." = "API Key 不能为空。";
+"API Secret" = "API Secret";
+"API Secret cannot be empty." = "API Secret 不能为空。";
+"Binance Account" = "币安账户";
+"Binance API not configured" = "未配置币安 API";
+"Binance authentication failed" = "币安鉴权失败";
+"Binance Environment" = "币安环境";
+"Binance network unavailable" = "币安网络不可用";
+"Binance Settings Error" = "币安设置错误";
+"Clear API Credentials" = "清除 API 凭据";
+"Configured" = "已配置";
+"Deactivate the Binance futures position HUD." = "关闭币安合约持仓悬浮窗。";
+"Enter a read-only USD-M Futures API Key and Secret." = "请输入只读的 USD-M 合约 API Key 和 Secret。";
+"Loading Binance positions..." = "正在加载币安持仓...";
+"Mainnet" = "正式网";
+"No open futures positions" = "当前没有合约持仓";
+"Not Configured" = "未配置";
+"Open Settings to add API Key and Secret" = "请前往设置填写 API Key 和 Secret";
+"Save" = "保存";
+"Testnet" = "测试网";
+"Toggle the Binance futures position HUD." = "打开或关闭币安合约持仓悬浮窗。";
+"Unable to decode Binance positions" = "无法解析币安持仓数据";
+"Unable to load Binance positions" = "无法加载币安持仓";
+"Updated %ds ago" = "%d 秒前更新";
+"Updated just now" = "刚刚更新";
+"more" = "更多";

@@ -540,6 +540,8 @@ static const CACornerMask kCornerMaskAll = kCALayerMinXMinYCorner | kCALayerMaxX
     [userDefaults addObserver:self forKeyPath:HUDUserDefaultsKeyUsesCustomOffset options:NSKeyValueObservingOptionNew context:nil];
     [userDefaults addObserver:self forKeyPath:HUDUserDefaultsKeyRealCustomOffsetX options:NSKeyValueObservingOptionNew context:nil];
     [userDefaults addObserver:self forKeyPath:HUDUserDefaultsKeyRealCustomOffsetY options:NSKeyValueObservingOptionNew context:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleBinanceServiceUpdate:) name:[TSBinancePositionService notificationName] object:nil];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
@@ -620,6 +622,8 @@ static const CACornerMask kCornerMaskAll = kCALayerMinXMinYCorner | kCALayerMaxX
     needsFPSBaselineReset = YES;
     attributedUploadPrefix = nil;
     attributedDownloadPrefix = nil;
+
+    [[TSBinancePositionService sharedService] reloadConfiguration];
 
     [self removeAllAnimations];
     [self resetGestureRecognizers];
@@ -829,21 +833,25 @@ static const CACornerMask kCornerMaskAll = kCALayerMinXMinYCorner | kCALayerMaxX
 - (void)dealloc
 {
     [_orientationObserver invalidate];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)updateSpeedLabel
 {
     log_debug(OS_LOG_DEFAULT, "updateSpeedLabel");
-    NSAttributedString *attributedText;
-    if (HUD_DISPLAY_MODE == 1) {
-        attributedText = formattedFPSAttributedString(_isFocused);
-    } else {
-        attributedText = formattedAttributedString(_isFocused);
-    }
+    HUDPresetPosition selectedMode = [self selectedModeForCurrentOrientation];
+    BOOL isCentered = (selectedMode == HUDPresetPositionTopCenter || selectedMode == HUDPresetPositionTopCenterMost);
+    NSAttributedString *attributedText = [[TSBinancePositionService sharedService] hudAttributedTextForCentered:isCentered focused:_isFocused fontSize:HUD_FONT_SIZE fontWeight:HUD_FONT_WEIGHT];
     if (attributedText) {
         [_speedLabel setAttributedText:attributedText];
     }
     [_speedLabel sizeToFit];
+}
+
+- (void)handleBinanceServiceUpdate:(NSNotification *)notification
+{
+    (void)notification;
+    [self updateSpeedLabel];
 }
 
 - (void)viewDidLoad
@@ -896,6 +904,7 @@ static const CACornerMask kCornerMaskAll = kCALayerMinXMinYCorner | kCALayerMaxX
     [_contentView setUserInteractionEnabled:YES];
 
     [self reloadUserDefaults];
+    [[TSBinancePositionService sharedService] start];
 }
 
 - (void)viewDidAppear:(BOOL)animated

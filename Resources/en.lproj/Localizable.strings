@@ -168,3 +168,33 @@
 
 /* No comment provided by engineer. */
 "▲▼" = "▲▼";
+
+/* Binance settings */
+"Activate the Binance futures position HUD." = "Activate the Binance futures position HUD.";
+"API Key" = "API Key";
+"API Key cannot be empty." = "API Key cannot be empty.";
+"API Secret" = "API Secret";
+"API Secret cannot be empty." = "API Secret cannot be empty.";
+"Binance Account" = "Binance Account";
+"Binance API not configured" = "Binance API not configured";
+"Binance authentication failed" = "Binance authentication failed";
+"Binance Environment" = "Binance Environment";
+"Binance network unavailable" = "Binance network unavailable";
+"Binance Settings Error" = "Binance Settings Error";
+"Clear API Credentials" = "Clear API Credentials";
+"Configured" = "Configured";
+"Deactivate the Binance futures position HUD." = "Deactivate the Binance futures position HUD.";
+"Enter a read-only USD-M Futures API Key and Secret." = "Enter a read-only USD-M Futures API Key and Secret.";
+"Loading Binance positions..." = "Loading Binance positions...";
+"Mainnet" = "Mainnet";
+"No open futures positions" = "No open futures positions";
+"Not Configured" = "Not Configured";
+"Open Settings to add API Key and Secret" = "Open Settings to add API Key and Secret";
+"Save" = "Save";
+"Testnet" = "Testnet";
+"Toggle the Binance futures position HUD." = "Toggle the Binance futures position HUD.";
+"Unable to decode Binance positions" = "Unable to decode Binance positions";
+"Unable to load Binance positions" = "Unable to load Binance positions";
+"Updated %ds ago" = "Updated %ds ago";
+"Updated just now" = "Updated just now";
+"more" = "more";

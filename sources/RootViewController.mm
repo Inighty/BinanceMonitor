@@ -316,6 +316,9 @@ static const CGFloat _gAuthorLabelBottomConstraintConstantRegular = -80.f;
         [GetStandardUserDefaults() synchronize];
     }
 
+    NSError *credentialError = nil;
+    [[TSBinanceCredentialStore sharedStore] clearCredentials:&credentialError];
+
     // Reset custom user defaults
     BOOL removed = [[NSFileManager defaultManager] removeItemAtPath:(JBROOT_PATH_NSSTRING(USER_DEFAULTS_PATH)) error:nil];
     if (removed)
@@ -599,6 +602,14 @@ static const CGFloat _gAuthorLabelBottomConstraintConstantRegular = -80.f;
 
 - (BOOL)settingHighlightedWithKey:(NSString * _Nonnull)key
 {
+    if ([key isEqualToString:HUDUserDefaultsKeyBinanceAccount]) {
+        return [[TSBinanceCredentialStore sharedStore] hasCredentials];
+    }
+
+    if ([key isEqualToString:HUDUserDefaultsKeyBinanceUseTestnet]) {
+        return [GetStandardUserDefaults() boolForKey:HUDUserDefaultsKeyBinanceUseTestnet];
+    }
+
     [self loadUserDefaults:NO];
     NSNumber *mode = [_userDefaults objectForKey:key];
     return mode != nil ? [mode boolValue] : NO;
@@ -606,9 +617,95 @@ static const CGFloat _gAuthorLabelBottomConstraintConstantRegular = -80.f;
 
 - (void)settingDidSelectWithKey:(NSString * _Nonnull)key
 {
+    if ([key isEqualToString:HUDUserDefaultsKeyBinanceAccount]) {
+        if (self.presentedViewController) {
+            [self dismissViewControllerAnimated:YES completion:^{
+                [self presentBinanceAccountEditor];
+            }];
+        } else {
+            [self presentBinanceAccountEditor];
+        }
+        return;
+    }
+
+    if ([key isEqualToString:HUDUserDefaultsKeyBinanceUseTestnet]) {
+        BOOL enabled = [GetStandardUserDefaults() boolForKey:HUDUserDefaultsKeyBinanceUseTestnet];
+        [GetStandardUserDefaults() setBool:!enabled forKey:HUDUserDefaultsKeyBinanceUseTestnet];
+        [GetStandardUserDefaults() synchronize];
+        notify_post(NOTIFY_RELOAD_HUD);
+        return;
+    }
+
     BOOL highlighted = [self settingHighlightedWithKey:key];
     [_userDefaults setObject:@(!highlighted) forKey:key];
     [self saveUserDefaults];
+}
+
+- (void)presentBinanceAccountEditor
+{
+    TSBinanceCredentialStore *store = [TSBinanceCredentialStore sharedStore];
+
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Binance Account", nil) message:NSLocalizedString(@"Enter a read-only USD-M Futures API Key and Secret.", nil) preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addTextField:^(UITextField * _Nonnull textField) {
+        textField.placeholder = NSLocalizedString(@"API Key", nil);
+        textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        textField.autocorrectionType = UITextAutocorrectionTypeNo;
+        textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+        textField.text = [store currentAPIKey];
+    }];
+    [alertController addTextField:^(UITextField * _Nonnull textField) {
+        textField.placeholder = NSLocalizedString(@"API Secret", nil);
+        textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        textField.autocorrectionType = UITextAutocorrectionTypeNo;
+        textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+        textField.secureTextEntry = YES;
+        if (@available(iOS 12.0, *)) {
+            textField.textContentType = UITextContentTypePassword;
+        }
+    }];
+
+    [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Dismiss", nil) style:UIAlertActionStyleCancel handler:nil]];
+
+    if ([store hasCredentials]) {
+        [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Clear API Credentials", nil) style:UIAlertActionStyleDestructive handler:^(__unused UIAlertAction * _Nonnull action) {
+            NSError *error = nil;
+            BOOL success = [store clearCredentials:&error];
+            if (!success) {
+                [self presentSettingsError:error];
+                return;
+            }
+
+            notify_post(NOTIFY_RELOAD_HUD);
+        }]];
+    }
+
+    [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Save", nil) style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction * _Nonnull action) {
+        NSString *apiKey = [alertController.textFields.firstObject.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        NSString *secretInput = [alertController.textFields.lastObject.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        NSString *secret = (secretInput.length > 0 ? secretInput : [store currentSecret]);
+        if (!secret) {
+            secret = @"";
+        }
+
+        NSError *error = nil;
+        BOOL success = [store saveAPIKey:apiKey secret:secret error:&error];
+        if (!success) {
+            [self presentSettingsError:error];
+            return;
+        }
+
+        notify_post(NOTIFY_RELOAD_HUD);
+    }]];
+
+    [self presentViewController:alertController animated:YES completion:nil];
+}
+
+- (void)presentSettingsError:(NSError *)error
+{
+    NSString *message = error.localizedDescription ?: NSLocalizedString(@"An unknown error occurred.", nil);
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Binance Settings Error", nil) message:message preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Dismiss", nil) style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 - (void)reloadModeButtonState

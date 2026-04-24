@@ -1,0 +1,772 @@
+import CryptoKit
+import Foundation
+import UIKit
+
+private let TSBinancePositionServiceDidUpdateNotificationName = Notification.Name("TSBinancePositionServiceDidUpdateNotification")
+
+private enum TSBinanceEnvironment: String, Equatable {
+    case mainnet
+    case testnet
+
+    var restBaseURL: URL {
+        switch self {
+        case .mainnet:
+            return URL(string: "https://fapi.binance.com")!
+        case .testnet:
+            return URL(string: "https://demo-fapi.binance.com")!
+        }
+    }
+
+    var webSocketBaseURL: URL {
+        switch self {
+        case .mainnet:
+            return URL(string: "wss://fstream.binance.com/private")!
+        case .testnet:
+            return URL(string: "wss://fstream.binancefuture.com/private")!
+        }
+    }
+}
+
+private enum TSBinanceConnectionState {
+    case idle
+    case connecting
+    case connected
+    case reconnecting
+}
+
+private enum TSBinanceSnapshotState {
+    case notConfigured
+    case loading
+    case ready
+    case failed(String)
+}
+
+private struct TSBinanceConfig: Equatable {
+    let apiKey: String
+    let secret: String
+    let environment: TSBinanceEnvironment
+}
+
+private struct TSBinancePositionRisk: Decodable {
+    let symbol: String
+    let positionSide: String
+    let positionAmt: String
+    let entryPrice: String
+    let markPrice: String
+    let unRealizedProfit: String
+    let notional: String
+    let initialMargin: String
+    let updateTime: Int64?
+}
+
+private struct TSBinanceListenKeyResponse: Decodable {
+    let listenKey: String
+}
+
+private struct TSBinanceStreamEnvelope: Decodable {
+    let eventType: String?
+    let eventTime: Int64?
+
+    enum CodingKeys: String, CodingKey {
+        case eventType = "e"
+        case eventTime = "E"
+    }
+}
+
+private struct TSBinanceDisplayEntry {
+    let symbol: String
+    let side: String
+    let quantity: String
+    let pnl: String
+    let roe: String?
+    let entryPrice: String
+    let markPrice: String
+    let sortValue: Decimal
+}
+
+@objcMembers
+final class TSBinancePositionService: NSObject {
+    private static let sharedInstance = TSBinancePositionService()
+    private static let snapshotRefreshInterval: TimeInterval = 15
+    private static let keepAliveInterval: TimeInterval = 50 * 60
+    private static let reconnectBaseDelay: TimeInterval = 3
+    private static let maxReconnectDelay: TimeInterval = 30
+
+    private let workQueue = DispatchQueue(label: "ch.xxtou.hudapp.binance.service")
+    private lazy var session: URLSession = {
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = 10
+        configuration.timeoutIntervalForResource = 20
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        return URLSession(configuration: configuration)
+    }()
+
+    private var snapshotState: TSBinanceSnapshotState = .notConfigured
+    private var connectionState: TSBinanceConnectionState = .idle
+    private var currentConfig: TSBinanceConfig?
+    private var displayEntries: [TSBinanceDisplayEntry] = []
+    private var lastUpdatedAt: Date?
+    private var latestErrorMessage: String?
+    private var isStarted = false
+
+    private var listenKey: String?
+    private var webSocketTask: URLSessionWebSocketTask?
+    private var keepAliveTimer: DispatchSourceTimer?
+    private var snapshotTimer: DispatchSourceTimer?
+    private var reconnectWorkItem: DispatchWorkItem?
+    private var snapshotRefreshWorkItem: DispatchWorkItem?
+    private var reconnectAttempt = 0
+
+    @objc(sharedService)
+    class func sharedService() -> TSBinancePositionService {
+        sharedInstance
+    }
+
+    func start() {
+        workQueue.async {
+            self.isStarted = true
+            self.configureAndStartIfNeeded(forceRestart: false)
+        }
+    }
+
+    func stop() {
+        workQueue.async {
+            self.isStarted = false
+            self.cancelReconnect()
+            self.cancelSnapshotRefresh()
+            self.stopTimers()
+            self.disconnectCurrentWebSocket()
+            self.listenKey = nil
+            self.connectionState = .idle
+        }
+    }
+
+    func reloadConfiguration() {
+        workQueue.async {
+            self.configureAndStartIfNeeded(forceRestart: true)
+        }
+    }
+
+    @objc(notificationName)
+    class func notificationName() -> String {
+        TSBinancePositionServiceDidUpdateNotificationName.rawValue
+    }
+
+    @objc(hudAttributedTextForCentered:focused:fontSize:fontWeight:)
+    func hudAttributedText(forCentered centered: Bool, focused: Bool, fontSize: CGFloat, fontWeight: CGFloat) -> NSAttributedString {
+        var state: TSBinanceSnapshotState = .notConfigured
+        var entries: [TSBinanceDisplayEntry] = []
+        var updatedAt: Date?
+        var latestError: String?
+
+        workQueue.sync {
+            state = snapshotState
+            entries = displayEntries
+            updatedAt = lastUpdatedAt
+            latestError = latestErrorMessage
+        }
+
+        let mainFont = UIFont.monospacedDigitSystemFont(ofSize: fontSize, weight: UIFont.Weight(fontWeight))
+        let detailFont = UIFont.monospacedDigitSystemFont(ofSize: max(fontSize - 1, 8), weight: UIFont.Weight(fontWeight))
+        let mutedFont = UIFont.systemFont(ofSize: max(fontSize - 1, 8), weight: .medium)
+
+        let baseAttributes: [NSAttributedString.Key: Any] = [
+            .font: mainFont,
+        ]
+        let detailAttributes: [NSAttributedString.Key: Any] = [
+            .font: detailFont,
+        ]
+        let mutedAttributes: [NSAttributedString.Key: Any] = [
+            .font: mutedFont,
+        ]
+
+        let attributed = NSMutableAttributedString()
+
+        switch state {
+        case .notConfigured:
+            attributed.append(NSAttributedString(string: NSLocalizedString("Binance API not configured", comment: "TSBinancePositionService"), attributes: baseAttributes))
+            attributed.append(NSAttributedString(string: "\n" + NSLocalizedString("Open Settings to add API Key and Secret", comment: "TSBinancePositionService"), attributes: mutedAttributes))
+            return attributed
+        case .loading:
+            attributed.append(NSAttributedString(string: NSLocalizedString("Loading Binance positions...", comment: "TSBinancePositionService"), attributes: baseAttributes))
+            return attributed
+        case .failed(let message):
+            attributed.append(NSAttributedString(string: message, attributes: baseAttributes))
+            if let latestError, !latestError.isEmpty, latestError != message {
+                attributed.append(NSAttributedString(string: "\n" + latestError, attributes: mutedAttributes))
+            }
+            return attributed
+        case .ready:
+            break
+        }
+
+        guard !entries.isEmpty else {
+            attributed.append(NSAttributedString(string: NSLocalizedString("No open futures positions", comment: "TSBinancePositionService"), attributes: baseAttributes))
+            if let updatedAt {
+                attributed.append(NSAttributedString(string: "\n" + relativeUpdateText(for: updatedAt), attributes: mutedAttributes))
+            }
+            return attributed
+        }
+
+        let visibleCount = centered ? 1 : min(entries.count, focused ? 2 : 3)
+        let visibleEntries = Array(entries.prefix(visibleCount))
+
+        for (index, entry) in visibleEntries.enumerated() {
+            if index > 0 {
+                attributed.append(NSAttributedString(string: "\n", attributes: detailAttributes))
+            }
+
+            let mainLine = "\(entry.symbol) \(entry.side) \(entry.quantity)  \(entry.pnl)"
+            attributed.append(NSAttributedString(string: mainLine, attributes: baseAttributes))
+        }
+
+        let primaryEntry = visibleEntries[0]
+        let remainingCount = entries.count - visibleEntries.count
+
+        if focused {
+            let secondaryLine = "E \(primaryEntry.entryPrice)  M \(primaryEntry.markPrice)"
+            attributed.append(NSAttributedString(string: "\n" + secondaryLine, attributes: detailAttributes))
+
+            if let roe = primaryEntry.roe {
+                attributed.append(NSAttributedString(string: "\nROE \(roe)", attributes: detailAttributes))
+            }
+        } else if centered {
+            if let roe = primaryEntry.roe {
+                attributed.append(NSAttributedString(string: "\nROE \(roe)", attributes: detailAttributes))
+            } else {
+                let secondaryLine = "E \(primaryEntry.entryPrice)  M \(primaryEntry.markPrice)"
+                attributed.append(NSAttributedString(string: "\n" + secondaryLine, attributes: detailAttributes))
+            }
+        }
+
+        if remainingCount > 0 {
+            attributed.append(NSAttributedString(
+                string: "\n+" + String(remainingCount) + " " + NSLocalizedString("more", comment: "TSBinancePositionService"),
+                attributes: mutedAttributes
+            ))
+        } else if let updatedAt, !focused {
+            attributed.append(NSAttributedString(string: "\n" + relativeUpdateText(for: updatedAt), attributes: mutedAttributes))
+        }
+
+        return attributed
+    }
+
+    private func configureAndStartIfNeeded(forceRestart: Bool) {
+        let newConfig = loadConfig()
+
+        guard isStarted else {
+            currentConfig = newConfig
+            updateState(snapshot: newConfig == nil ? .notConfigured : .loading, error: nil, entries: nil)
+            return
+        }
+
+        guard let newConfig else {
+            currentConfig = nil
+            stopTimers()
+            disconnectCurrentWebSocket()
+            listenKey = nil
+            connectionState = .idle
+            displayEntries = []
+            updateState(snapshot: .notConfigured, error: nil, entries: [])
+            return
+        }
+
+        let shouldRestart = forceRestart || currentConfig != newConfig
+        currentConfig = newConfig
+
+        if !shouldRestart, webSocketTask != nil || connectionState == .connecting {
+            return
+        }
+
+        stopTimers()
+        disconnectCurrentWebSocket()
+        listenKey = nil
+        reconnectAttempt = 0
+        connectionState = .idle
+        latestErrorMessage = nil
+        updateState(snapshot: .loading, error: nil, entries: nil)
+        refreshSnapshot(reason: "startup")
+        setupPeriodicSnapshotRefresh()
+        connectUserStream()
+    }
+
+    private func loadConfig() -> TSBinanceConfig? {
+        let credentialStore = TSBinanceCredentialStore.sharedStore()
+        guard
+            let apiKey = credentialStore.currentAPIKey()?.trimmingCharacters(in: .whitespacesAndNewlines),
+            !apiKey.isEmpty,
+            let secret = credentialStore.currentSecret()?.trimmingCharacters(in: .whitespacesAndNewlines),
+            !secret.isEmpty
+        else {
+            return nil
+        }
+
+        let useTestnet = GetStandardUserDefaults().bool(forKey: HUDUserDefaultsKeyBinanceUseTestnet)
+        let environment: TSBinanceEnvironment = useTestnet ? .testnet : .mainnet
+        return TSBinanceConfig(apiKey: apiKey, secret: secret, environment: environment)
+    }
+
+    private func updateState(snapshot: TSBinanceSnapshotState, error: String?, entries: [TSBinanceDisplayEntry]?) {
+        snapshotState = snapshot
+        if let entries {
+            displayEntries = entries
+        }
+        latestErrorMessage = error
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: TSBinancePositionServiceDidUpdateNotificationName, object: nil)
+        }
+    }
+
+    private func relativeUpdateText(for date: Date) -> String {
+        let elapsed = max(Int(Date().timeIntervalSince(date)), 0)
+        if elapsed == 0 {
+            return NSLocalizedString("Updated just now", comment: "TSBinancePositionService")
+        }
+        return String(format: NSLocalizedString("Updated %ds ago", comment: "TSBinancePositionService"), elapsed)
+    }
+
+    private func refreshSnapshot(reason: String) {
+        guard let config = currentConfig else {
+            updateState(snapshot: .notConfigured, error: nil, entries: [])
+            return
+        }
+
+        performSignedRequest(
+            config: config,
+            method: "GET",
+            path: "/fapi/v3/positionRisk",
+            securityType: .signed,
+            queryItems: []
+        ) { [weak self] result in
+            guard let self else { return }
+            self.workQueue.async {
+                guard config == self.currentConfig else { return }
+
+                switch result {
+                case .success(let data):
+                    do {
+                        let positions = try JSONDecoder().decode([TSBinancePositionRisk].self, from: data)
+                        let entries = self.makeDisplayEntries(from: positions)
+                        self.lastUpdatedAt = Date()
+                        self.updateState(snapshot: .ready, error: nil, entries: entries)
+                    } catch {
+                        self.latestErrorMessage = error.localizedDescription
+                        if self.displayEntries.isEmpty {
+                            self.updateState(
+                                snapshot: .failed(NSLocalizedString("Unable to decode Binance positions", comment: "TSBinancePositionService")),
+                                error: error.localizedDescription,
+                                entries: nil
+                            )
+                        } else {
+                            self.postUpdateNotification()
+                        }
+                    }
+                case .failure(let error):
+                    self.latestErrorMessage = error.localizedDescription
+                    if self.displayEntries.isEmpty {
+                        self.updateState(snapshot: .failed(self.userFacingErrorMessage(from: error)), error: error.localizedDescription, entries: nil)
+                    } else {
+                        self.postUpdateNotification()
+                    }
+                }
+            }
+        }
+    }
+
+    private func makeDisplayEntries(from positions: [TSBinancePositionRisk]) -> [TSBinanceDisplayEntry] {
+        positions.compactMap { position in
+            guard let quantity = decimal(from: position.positionAmt), quantity != 0 else {
+                return nil
+            }
+
+            let side: String
+            if position.positionSide == "LONG" {
+                side = "L"
+            } else if position.positionSide == "SHORT" {
+                side = "S"
+            } else {
+                side = quantity >= 0 ? "L" : "S"
+            }
+
+            let pnl = decimal(from: position.unRealizedProfit) ?? 0
+            let notional = absDecimal(from: position.notional) ?? abs(quantity)
+            let initialMargin = absDecimal(from: position.initialMargin)
+            let roe: String?
+            if let initialMargin, initialMargin != 0 {
+                roe = signedString(for: (pnl / initialMargin) * 100, suffix: "%")
+            } else {
+                roe = nil
+            }
+
+            return TSBinanceDisplayEntry(
+                symbol: position.symbol,
+                side: side,
+                quantity: trimDecimal(quantityMagnitude(from: quantity)),
+                pnl: signedString(for: pnl, suffix: ""),
+                roe: roe,
+                entryPrice: trimDecimalString(position.entryPrice),
+                markPrice: trimDecimalString(position.markPrice),
+                sortValue: notional
+            )
+        }
+        .sorted {
+            if $0.sortValue == $1.sortValue {
+                if $0.symbol == $1.symbol {
+                    return $0.side < $1.side
+                }
+                return $0.symbol < $1.symbol
+            }
+            return $0.sortValue > $1.sortValue
+        }
+    }
+
+    private func connectUserStream() {
+        guard let config = currentConfig else { return }
+        connectionState = .connecting
+
+        performSignedRequest(
+            config: config,
+            method: "POST",
+            path: "/fapi/v1/listenKey",
+            securityType: .apiKey,
+            queryItems: []
+        ) { [weak self] result in
+            guard let self else { return }
+            self.workQueue.async {
+                guard config == self.currentConfig else { return }
+
+                switch result {
+                case .success(let data):
+                    do {
+                        let response = try JSONDecoder().decode(TSBinanceListenKeyResponse.self, from: data)
+                        self.listenKey = response.listenKey
+                        self.reconnectAttempt = 0
+                        self.connectionState = .connected
+                        self.openWebSocket(listenKey: response.listenKey, config: config)
+                        self.setupKeepAliveTimer()
+                    } catch {
+                        self.handleConnectionFailure(error)
+                    }
+                case .failure(let error):
+                    self.handleConnectionFailure(error)
+                }
+            }
+        }
+    }
+
+    private func openWebSocket(listenKey: String, config: TSBinanceConfig) {
+        let webSocketURL = config.environment.webSocketBaseURL.appendingPathComponent("ws").appendingPathComponent(listenKey)
+        let task = session.webSocketTask(with: webSocketURL)
+        webSocketTask = task
+        task.resume()
+        receiveNextMessage(for: task, config: config)
+    }
+
+    private func receiveNextMessage(for task: URLSessionWebSocketTask, config: TSBinanceConfig) {
+        task.receive { [weak self] result in
+            guard let self else { return }
+            self.workQueue.async {
+                guard task == self.webSocketTask, config == self.currentConfig else { return }
+
+                switch result {
+                case .success(let message):
+                    self.handleWebSocketMessage(message, config: config)
+                    self.receiveNextMessage(for: task, config: config)
+                case .failure(let error):
+                    self.handleConnectionFailure(error)
+                }
+            }
+        }
+    }
+
+    private func handleWebSocketMessage(_ message: URLSessionWebSocketTask.Message, config: TSBinanceConfig) {
+        let data: Data
+        switch message {
+        case .data(let payload):
+            data = payload
+        case .string(let text):
+            data = Data(text.utf8)
+        @unknown default:
+            return
+        }
+
+        guard let envelope = try? JSONDecoder().decode(TSBinanceStreamEnvelope.self, from: data) else {
+            return
+        }
+
+        switch envelope.eventType {
+        case "ACCOUNT_UPDATE":
+            scheduleSnapshotRefreshSoon()
+        case "listenKeyExpired":
+            reconnectUserStream()
+        default:
+            break
+        }
+    }
+
+    private func setupKeepAliveTimer() {
+        keepAliveTimer?.cancel()
+        guard let config = currentConfig else { return }
+
+        let timer = DispatchSource.makeTimerSource(queue: workQueue)
+        timer.schedule(deadline: .now() + Self.keepAliveInterval, repeating: Self.keepAliveInterval)
+        timer.setEventHandler { [weak self] in
+            self?.keepAliveListenKey(using: config)
+        }
+        keepAliveTimer = timer
+        timer.resume()
+    }
+
+    private func setupPeriodicSnapshotRefresh() {
+        snapshotTimer?.cancel()
+        let timer = DispatchSource.makeTimerSource(queue: workQueue)
+        timer.schedule(deadline: .now() + Self.snapshotRefreshInterval, repeating: Self.snapshotRefreshInterval)
+        timer.setEventHandler { [weak self] in
+            self?.refreshSnapshot(reason: "periodic")
+        }
+        snapshotTimer = timer
+        timer.resume()
+    }
+
+    private func keepAliveListenKey(using config: TSBinanceConfig) {
+        guard let listenKey else {
+            connectUserStream()
+            return
+        }
+
+        performSignedRequest(
+            config: config,
+            method: "PUT",
+            path: "/fapi/v1/listenKey",
+            securityType: .apiKey,
+            queryItems: [URLQueryItem(name: "listenKey", value: listenKey)]
+        ) { [weak self] result in
+            guard let self else { return }
+            self.workQueue.async {
+                guard config == self.currentConfig else { return }
+                if case .failure = result {
+                    self.reconnectUserStream()
+                }
+            }
+        }
+    }
+
+    private func scheduleSnapshotRefreshSoon() {
+        cancelSnapshotRefresh()
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.refreshSnapshot(reason: "account-update")
+        }
+        snapshotRefreshWorkItem = workItem
+        workQueue.asyncAfter(deadline: .now() + 0.5, execute: workItem)
+    }
+
+    private func cancelSnapshotRefresh() {
+        snapshotRefreshWorkItem?.cancel()
+        snapshotRefreshWorkItem = nil
+    }
+
+    private func reconnectUserStream() {
+        guard isStarted, currentConfig != nil else { return }
+        connectionState = .reconnecting
+        stopTimers()
+        disconnectCurrentWebSocket()
+        listenKey = nil
+        scheduleReconnect()
+    }
+
+    private func scheduleReconnect() {
+        cancelReconnect()
+        reconnectAttempt += 1
+        let delay = min(Self.reconnectBaseDelay * Double(reconnectAttempt), Self.maxReconnectDelay)
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.configureAndStartIfNeeded(forceRestart: true)
+        }
+        reconnectWorkItem = workItem
+        workQueue.asyncAfter(deadline: .now() + delay, execute: workItem)
+    }
+
+    private func cancelReconnect() {
+        reconnectWorkItem?.cancel()
+        reconnectWorkItem = nil
+    }
+
+    private func handleConnectionFailure(_ error: Error) {
+        latestErrorMessage = error.localizedDescription
+        reconnectUserStream()
+        postUpdateNotification()
+    }
+
+    private func stopTimers() {
+        keepAliveTimer?.cancel()
+        keepAliveTimer = nil
+        snapshotTimer?.cancel()
+        snapshotTimer = nil
+    }
+
+    private func disconnectCurrentWebSocket() {
+        webSocketTask?.cancel(with: .normalClosure, reason: nil)
+        webSocketTask = nil
+    }
+
+    private func postUpdateNotification() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: TSBinancePositionServiceDidUpdateNotificationName, object: nil)
+        }
+    }
+
+    private enum TSBinanceSecurityType: Equatable {
+        case none
+        case apiKey
+        case signed
+    }
+
+    private func performSignedRequest(
+        config: TSBinanceConfig,
+        method: String,
+        path: String,
+        securityType: TSBinanceSecurityType,
+        queryItems: [URLQueryItem],
+        completion: @escaping (Result<Data, Error>) -> Void
+    ) {
+        var items = queryItems
+
+        if securityType == .signed {
+            items.append(URLQueryItem(name: "timestamp", value: String(Int(Date().timeIntervalSince1970 * 1000))))
+            items.append(URLQueryItem(name: "recvWindow", value: "5000"))
+            let query = queryString(from: items)
+            let signature = sign(query: query, secret: config.secret)
+            items.append(URLQueryItem(name: "signature", value: signature))
+        }
+
+        var components = URLComponents(url: config.environment.restBaseURL.appendingPathComponent(path), resolvingAgainstBaseURL: false)!
+        components.percentEncodedQuery = queryString(from: items)
+
+        guard let url = components.url else {
+            completion(.failure(NSError(domain: "TSBinancePositionService", code: 100, userInfo: [NSLocalizedDescriptionKey: "Invalid Binance URL"])))
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = method
+        if securityType == .apiKey || securityType == .signed {
+            request.setValue(config.apiKey, forHTTPHeaderField: "X-MBX-APIKEY")
+        }
+
+        session.dataTask(with: request) { data, response, error in
+            if let error {
+                completion(.failure(error))
+                return
+            }
+
+            guard
+                let httpResponse = response as? HTTPURLResponse,
+                let data
+            else {
+                completion(.failure(NSError(domain: "TSBinancePositionService", code: 101, userInfo: [NSLocalizedDescriptionKey: "Missing Binance response"])))
+                return
+            }
+
+            guard (200 ... 299).contains(httpResponse.statusCode) else {
+                completion(.failure(self.binanceAPIError(from: data, statusCode: httpResponse.statusCode)))
+                return
+            }
+
+            completion(.success(data))
+        }.resume()
+    }
+
+    private func binanceAPIError(from data: Data, statusCode: Int) -> NSError {
+        if
+            let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let message = object["msg"] as? String
+        {
+            return NSError(
+                domain: "TSBinanceAPI",
+                code: statusCode,
+                userInfo: [NSLocalizedDescriptionKey: message]
+            )
+        }
+
+        return NSError(
+            domain: "TSBinanceAPI",
+            code: statusCode,
+            userInfo: [NSLocalizedDescriptionKey: "HTTP \(statusCode)"]
+        )
+    }
+
+    private func userFacingErrorMessage(from error: Error) -> String {
+        let message = error.localizedDescription.lowercased()
+        if message.contains("api-key") || message.contains("signature") || message.contains("permission") {
+            return NSLocalizedString("Binance authentication failed", comment: "TSBinancePositionService")
+        }
+        if message.contains("timed out") || message.contains("offline") || message.contains("network") {
+            return NSLocalizedString("Binance network unavailable", comment: "TSBinancePositionService")
+        }
+        return NSLocalizedString("Unable to load Binance positions", comment: "TSBinancePositionService")
+    }
+
+    private func queryString(from items: [URLQueryItem]) -> String {
+        items
+            .map {
+                let value = $0.value ?? ""
+                return "\($0.name)=\(percentEncode(value))"
+            }
+            .joined(separator: "&")
+    }
+
+    private func percentEncode(_ value: String) -> String {
+        let allowed = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~")
+        return value.addingPercentEncoding(withAllowedCharacters: allowed) ?? value
+    }
+
+    private func sign(query: String, secret: String) -> String {
+        let key = SymmetricKey(data: Data(secret.utf8))
+        let signature = HMAC<SHA256>.authenticationCode(for: Data(query.utf8), using: key)
+        return signature.map { String(format: "%02x", $0) }.joined()
+    }
+
+    private func decimal(from string: String) -> Decimal? {
+        Decimal(string: string, locale: Locale(identifier: "en_US_POSIX"))
+    }
+
+    private func absDecimal(from string: String) -> Decimal? {
+        guard let value = decimal(from: string) else {
+            return nil
+        }
+        return abs(value)
+    }
+
+    private func trimDecimalString(_ string: String) -> String {
+        guard var value = decimal(from: string) else {
+            return string
+        }
+        return trimDecimal(value)
+    }
+
+    private func trimDecimal(_ decimalValue: Decimal) -> String {
+        var value = decimalValue
+        var rounded = Decimal()
+        NSDecimalRound(&rounded, &value, 6, .plain)
+        let number = NSDecimalNumber(decimal: rounded)
+        if number == NSDecimalNumber.notANumber {
+            return "--"
+        }
+        return number.stringValue
+    }
+
+    private func signedString(for decimal: Decimal, suffix: String) -> String {
+        var value = decimal
+        var rounded = Decimal()
+        NSDecimalRound(&rounded, &value, 2, .plain)
+        let number = NSDecimalNumber(decimal: rounded)
+        if number == NSDecimalNumber.notANumber {
+            return "--"
+        }
+        let prefix = number.compare(NSDecimalNumber.zero) == .orderedAscending ? "" : "+"
+        return prefix + number.stringValue + suffix
+    }
+
+    private func quantityMagnitude(from value: Decimal) -> Decimal {
+        value < 0 ? (0 - value) : value
+    }
+}

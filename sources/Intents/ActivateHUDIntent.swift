@@ -13,7 +13,7 @@ struct ActivateHUDIntent: AppIntent {
     static let title: LocalizedStringResource = "Open HUD"
 
     static let description = IntentDescription(
-        "Activate the network speed HUD.",
+        "Activate the Binance futures position HUD.",
         categoryName: "Utility",
         searchKeywords: [
             "activate",

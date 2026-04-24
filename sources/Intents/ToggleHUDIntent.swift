@@ -13,7 +13,7 @@ struct ToggleHUDIntent: AppIntent {
     static let title: LocalizedStringResource = "Toggle HUD"
 
     static let description = IntentDescription(
-        "Toggle the network speed HUD.",
+        "Toggle the Binance futures position HUD.",
         categoryName: "Utility",
         searchKeywords: [
             "toggle",

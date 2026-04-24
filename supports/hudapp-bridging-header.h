@@ -28,6 +28,8 @@ static HUDUserDefaultsKey const HUDUserDefaultsKeyUsesInvertedColor = @"usesInve
 static HUDUserDefaultsKey const HUDUserDefaultsKeyKeepInPlace = @"keepInPlace";
 static HUDUserDefaultsKey const HUDUserDefaultsKeyHideAtSnapshot = @"hideAtSnapshot";
 static HUDUserDefaultsKey const HUDUserDefaultsKeyDisplayMode = @"displayMode";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceUseTestnet = @"binanceUseTestnet";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceAccount = @"binanceAccount";
 
 static HUDUserDefaultsKey const HUDUserDefaultsKeyUsesCustomFontSize = @"usesCustomFontSize";
 static HUDUserDefaultsKey const HUDUserDefaultsKeyRealCustomFontSize = @"realCustomFontSize";
