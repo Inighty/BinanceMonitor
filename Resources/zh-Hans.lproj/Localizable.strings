@@ -47,7 +47,7 @@
 "0 KB/s" = "0 KB/s";
 
 /* No comment provided by engineer. */
-"Activate the network speed HUD." = "打开网速悬浮窗。";
+"Activate the network speed HUD." = "打开币安合约持仓悬浮窗。";
 
 /* No comment provided by engineer. */
 "Appearance" = "外观";
@@ -65,7 +65,7 @@
 "Classic" = "经典";
 
 /* No comment provided by engineer. */
-"Deactivate the network speed HUD." = "关闭网速悬浮窗。";
+"Deactivate the network speed HUD." = "关闭币安合约持仓悬浮窗。";
 
 /* No comment provided by engineer. */
 "Developer Area" = "开发者工具";
@@ -152,7 +152,7 @@
 "Toggle HUD" = "打开/关闭悬浮窗";
 
 /* No comment provided by engineer. */
-"Toggle the network speed HUD." = "打开/关闭网速悬浮窗。";
+"Toggle the network speed HUD." = "打开/关闭币安合约持仓悬浮窗。";
 
 /* No comment provided by engineer. */
 "Unit" = "单位";

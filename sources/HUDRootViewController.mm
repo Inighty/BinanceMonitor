@@ -585,16 +585,6 @@ static const CACornerMask kCornerMaskAll = kCALayerMinXMinYCorner | kCALayerMaxX
 {
     [self loadUserDefaults:YES];
 
-    BOOL singleLineMode = [self singleLineMode];
-    HUD_SHOW_UPLOAD_SPEED = !singleLineMode;
-
-    BOOL usesBitrate = [self usesBitrate];
-    HUD_DATA_UNIT = usesBitrate;
-
-    BOOL usesArrowPrefixes = [self usesArrowPrefixes];
-    HUD_UPLOAD_PREFIX = (usesArrowPrefixes ? "↑" : "▲");
-    HUD_DOWNLOAD_PREFIX = (usesArrowPrefixes ? "↓" : "▼");
-
     BOOL usesCustomFontSize = [self usesCustomFontSize];
     if (!usesCustomFontSize) {
         BOOL usesLargeFont = [self usesLargeFont];
@@ -619,17 +609,6 @@ static const CACornerMask kCornerMaskAll = kCALayerMinXMinYCorner | kCALayerMaxX
     } else {
         [_containerView setupContainerAsDisplayContentInScreenshots];
     }
-
-    BOOL displayMode = [self displayMode];
-    HUD_DISPLAY_MODE = displayMode;
-
-    prevInputBytes = 0;
-    prevOutputBytes = 0;
-    needsBaselineReset = YES;
-    prevDirtyFrameCount = 0;
-    needsFPSBaselineReset = YES;
-    attributedUploadPrefix = nil;
-    attributedDownloadPrefix = nil;
 
     [[TSBinancePositionService sharedService] reloadConfiguration];
 
@@ -924,7 +903,8 @@ static const CACornerMask kCornerMaskAll = kCALayerMinXMinYCorner | kCALayerMaxX
 - (void)resetLoopTimer
 {
     [_timer invalidate];
-    _timer = [NSTimer scheduledTimerWithTimeInterval:UPDATE_INTERVAL target:self selector:@selector(updateSpeedLabel) userInfo:nil repeats:YES];
+    _timer = nil;
+    [self updateSpeedLabel];
 }
 
 - (void)stopLoopTimer

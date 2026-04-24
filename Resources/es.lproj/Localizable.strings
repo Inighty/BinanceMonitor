@@ -47,7 +47,7 @@
 "0 KB/s" = "0 KB/s";
 
 /* No comment provided by engineer. */
-"Activate the network speed HUD." = "Activa la velocidad de red HUD.";
+"Activate the network speed HUD." = "Activa el HUD de posiciones de futuros de Binance.";
 
 /* No comment provided by engineer. */
 "Appearance" = "Apariencia";
@@ -65,7 +65,7 @@
 "Classic" = "Clásico";
 
 /* No comment provided by engineer. */
-"Deactivate the network speed HUD." = "Desactiva la velocidad de red HUD.";
+"Deactivate the network speed HUD." = "Desactiva el HUD de posiciones de futuros de Binance.";
 
 /* No comment provided by engineer. */
 "Developer Area" = "Área de desarrollo";
@@ -152,7 +152,7 @@
 "Toggle HUD" = "Alternar HUD";
 
 /* No comment provided by engineer. */
-"Toggle the network speed HUD." = "Cambia la velocidad de la red HUD.";
+"Toggle the network speed HUD." = "Alterna el HUD de posiciones de futuros de Binance.";
 
 /* No comment provided by engineer. */
 "Unit" = "Unid";
