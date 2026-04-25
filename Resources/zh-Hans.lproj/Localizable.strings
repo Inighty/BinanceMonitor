@@ -19,6 +19,7 @@
 "Clear API Credentials" = "清除 API 凭据";
 "Clear Saved Credentials" = "清除已保存凭据";
 "Clipboard is empty or paste access was denied." = "剪贴板为空，或系统拒绝了粘贴访问。";
+"Clipboard does not contain text." = "剪贴板中没有可粘贴的文本。";
 "Configured" = "已配置";
 "Deactivate the Binance futures position HUD." = "关闭币安合约持仓悬浮窗。";
 "Developer Area" = "开发者选项";

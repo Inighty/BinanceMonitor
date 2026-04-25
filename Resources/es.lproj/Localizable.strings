@@ -19,6 +19,7 @@
 "Clear API Credentials" = "Borrar credenciales de la API";
 "Clear Saved Credentials" = "Borrar credenciales guardadas";
 "Clipboard is empty or paste access was denied." = "El portapapeles está vacío o se denegó el acceso para pegar.";
+"Clipboard does not contain text." = "El portapapeles no contiene texto.";
 "Configured" = "Configurado";
 "Deactivate the Binance futures position HUD." = "Desactiva el HUD de posiciones de futuros de Binance.";
 "Developer Area" = "Área de desarrollo";

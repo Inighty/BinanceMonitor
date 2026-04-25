@@ -19,6 +19,7 @@
 "Clear API Credentials" = "Clear API Credentials";
 "Clear Saved Credentials" = "Clear Saved Credentials";
 "Clipboard is empty or paste access was denied." = "Clipboard is empty or paste access was denied.";
+"Clipboard does not contain text." = "Clipboard does not contain text.";
 "Configured" = "Configured";
 "Deactivate the Binance futures position HUD." = "Deactivate the Binance futures position HUD.";
 "Developer Area" = "Developer Area";

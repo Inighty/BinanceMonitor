@@ -6,6 +6,63 @@ import UIKit
 
 @objcMembers
 final class TSBinanceAccountViewController: UIViewController {
+    private final class PasteTarget: UIResponder, UIPasteConfigurationSupporting {
+        weak var textField: UITextField?
+        private let applyText: (String, UITextField) -> Void
+        private let presentError: (Error) -> Void
+
+        var pasteConfiguration: UIPasteConfiguration?
+
+        init(
+            textField: UITextField,
+            applyText: @escaping (String, UITextField) -> Void,
+            presentError: @escaping (Error) -> Void
+        ) {
+            self.textField = textField
+            self.applyText = applyText
+            self.presentError = presentError
+            self.pasteConfiguration = UIPasteConfiguration(forAccepting: NSString.self)
+            super.init()
+        }
+
+        func canPaste(_ itemProviders: [NSItemProvider]) -> Bool {
+            itemProviders.contains { $0.canLoadObject(ofClass: NSString.self) }
+        }
+
+        func paste(itemProviders: [NSItemProvider]) {
+            guard let itemProvider = itemProviders.first(where: { $0.canLoadObject(ofClass: NSString.self) }) else {
+                presentError(NSError(
+                    domain: "TSBinanceAccountViewController",
+                    code: 2,
+                    userInfo: [NSLocalizedDescriptionKey: NSLocalizedString("Clipboard does not contain text.", comment: "TSBinanceAccountViewController")]
+                ))
+                return
+            }
+
+            itemProvider.loadObject(ofClass: NSString.self) { [weak self] object, error in
+                DispatchQueue.main.async {
+                    guard let self else { return }
+
+                    if let textField = self.textField, let pastedText = object as? String, !pastedText.isEmpty {
+                        self.applyText(pastedText, textField)
+                        return
+                    }
+
+                    if let error {
+                        self.presentError(error)
+                        return
+                    }
+
+                    self.presentError(NSError(
+                        domain: "TSBinanceAccountViewController",
+                        code: 3,
+                        userInfo: [NSLocalizedDescriptionKey: NSLocalizedString("Clipboard is empty or paste access was denied.", comment: "TSBinanceAccountViewController")]
+                    ))
+                }
+            }
+        }
+    }
+
     weak var delegate: TSBinanceAccountViewControllerDelegate?
 
     private let store = TSBinanceCredentialStore.sharedStore()
@@ -45,15 +102,35 @@ final class TSBinanceAccountViewController: UIViewController {
     )
 
     private lazy var apiKeyPasteControl: UIView = makePasteControl(
-        for: apiKeyField,
+        target: apiKeyPasteTarget,
         title: NSLocalizedString("Paste API Key", comment: "TSBinanceAccountViewController"),
         action: #selector(pasteAPIKey)
     )
 
     private lazy var secretPasteControl: UIView = makePasteControl(
-        for: secretField,
+        target: secretPasteTarget,
         title: NSLocalizedString("Paste API Secret", comment: "TSBinanceAccountViewController"),
         action: #selector(pasteSecret)
+    )
+
+    private lazy var apiKeyPasteTarget = PasteTarget(
+        textField: apiKeyField,
+        applyText: { [weak self] text, textField in
+            self?.applyPastedText(text, to: textField)
+        },
+        presentError: { [weak self] error in
+            self?.presentError(error)
+        }
+    )
+
+    private lazy var secretPasteTarget = PasteTarget(
+        textField: secretField,
+        applyText: { [weak self] text, textField in
+            self?.applyPastedText(text, to: textField)
+        },
+        presentError: { [weak self] error in
+            self?.presentError(error)
+        }
     )
 
     private lazy var secretVisibilityButton: UIButton = makeActionButton(
@@ -207,17 +284,17 @@ final class TSBinanceAccountViewController: UIViewController {
         return button
     }
 
-    private func makePasteControl(for textField: UITextField, title: String, action: Selector) -> UIView {
+    private func makePasteControl(target: UIPasteConfigurationSupporting, title: String, action: Selector) -> UIView {
         if #available(iOS 16.0, *) {
             let configuration = UIPasteControl.Configuration()
             configuration.baseBackgroundColor = view.tintColor.withAlphaComponent(0.08)
             configuration.baseForegroundColor = view.tintColor
             configuration.cornerStyle = .medium
-            configuration.displayMode = .labelOnly
+            configuration.displayMode = .iconAndLabel
 
             let pasteControl = UIPasteControl(configuration: configuration)
             pasteControl.translatesAutoresizingMaskIntoConstraints = false
-            pasteControl.target = textField
+            pasteControl.target = target
             pasteControl.heightAnchor.constraint(equalToConstant: 44).isActive = true
             return pasteControl
         }
@@ -314,7 +391,12 @@ final class TSBinanceAccountViewController: UIViewController {
             return
         }
 
-        textField.text = clipboardText
+        applyPastedText(clipboardText, to: textField)
+    }
+
+    private func applyPastedText(_ text: String, to textField: UITextField) {
+        textField.text = text
+        textField.sendActions(for: .editingChanged)
         textField.becomeFirstResponder()
     }
 
