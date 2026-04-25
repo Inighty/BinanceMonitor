@@ -713,7 +713,7 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
     if (_isRemoteHUDActive) {
         return;
     }
-    NSString *repoURLString = @"https://github.com/Inighty/trollspeed";
+    NSString *repoURLString = @"https://github.com/Inighty/BinanceHUD";
     NSURL *repoURL = [NSURL URLWithString:repoURLString];
     [[UIApplication sharedApplication] openURL:repoURL options:@{} completionHandler:nil];
 }

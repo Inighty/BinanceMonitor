@@ -1,10 +1,10 @@
 # BinanceHUD
 
-[![Xcode - Build and Analyze](https://github.com/Inighty/trollspeed/actions/workflows/build-analyse.yml/badge.svg)](https://github.com/Inighty/trollspeed/actions/workflows/build-analyse.yml)
-[![Analyse Commands](https://github.com/Inighty/trollspeed/actions/workflows/analyse-commands.yml/badge.svg)](https://github.com/Inighty/trollspeed/actions/workflows/analyse-commands.yml)
-[![Build Release](https://github.com/Inighty/trollspeed/actions/workflows/build-release.yml/badge.svg)](https://github.com/Inighty/trollspeed/actions/workflows/build-release.yml)
-![Latest Release](https://img.shields.io/github/v/release/Inighty/trollspeed)
-![MIT License](https://img.shields.io/github/license/Inighty/trollspeed)
+[![Xcode - Build and Analyze](https://github.com/Inighty/BinanceHUD/actions/workflows/build-analyse.yml/badge.svg)](https://github.com/Inighty/BinanceHUD/actions/workflows/build-analyse.yml)
+[![Analyse Commands](https://github.com/Inighty/BinanceHUD/actions/workflows/analyse-commands.yml/badge.svg)](https://github.com/Inighty/BinanceHUD/actions/workflows/analyse-commands.yml)
+[![Build Release](https://github.com/Inighty/BinanceHUD/actions/workflows/build-release.yml/badge.svg)](https://github.com/Inighty/BinanceHUD/actions/workflows/build-release.yml)
+![Latest Release](https://img.shields.io/github/v/release/Inighty/BinanceHUD)
+![MIT License](https://img.shields.io/github/license/Inighty/BinanceHUD)
 
 BinanceHUD is a TrollStore app that shows Binance USD-M Futures positions as a persistent floating HUD.
 
