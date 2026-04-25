@@ -34,6 +34,7 @@
 
 @interface HUDRootViewController (Internal)
 - (void)refreshHUDContent;
+- (void)updateHUDLabel;
 - (void)updateOrientation:(UIInterfaceOrientation)orientation animateWithDuration:(NSTimeInterval)duration;
 @end
 
