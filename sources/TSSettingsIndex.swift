@@ -4,6 +4,7 @@ enum TSSettingsIndex: Int, CaseIterable {
     case binanceAccount = 0
     case binanceUseTestnet
     case binanceRefreshInterval
+    case binanceFocusSymbol
     case binanceShowSymbol
     case binanceShowSide
     case binanceShowQuantity
@@ -26,6 +27,8 @@ enum TSSettingsIndex: Int, CaseIterable {
             return HUDUserDefaultsKeyBinanceUseTestnet
         case .binanceRefreshInterval:
             return HUDUserDefaultsKeyBinanceRefreshInterval
+        case .binanceFocusSymbol:
+            return HUDUserDefaultsKeyBinanceFocusSymbol
         case .binanceShowSymbol:
             return HUDUserDefaultsKeyBinanceShowSymbol
         case .binanceShowSide:
@@ -63,6 +66,8 @@ enum TSSettingsIndex: Int, CaseIterable {
             return NSLocalizedString("Binance Environment", comment: "TSSettingsIndex")
         case .binanceRefreshInterval:
             return NSLocalizedString("Refresh Interval", comment: "TSSettingsIndex")
+        case .binanceFocusSymbol:
+            return NSLocalizedString("Display Symbol", comment: "TSSettingsIndex")
         case .binanceShowSymbol:
             return NSLocalizedString("Show Symbol", comment: "TSSettingsIndex")
         case .binanceShowSide:
@@ -100,6 +105,8 @@ enum TSSettingsIndex: Int, CaseIterable {
             return highlighted ? NSLocalizedString("Testnet", comment: "TSSettingsIndex") : NSLocalizedString("Mainnet", comment: "TSSettingsIndex")
         case .binanceRefreshInterval:
             return TSSettingsIndex.binanceRefreshIntervalSubtitle()
+        case .binanceFocusSymbol:
+            return TSSettingsIndex.binanceFocusSymbolSubtitle()
         case .binanceShowSymbol, .binanceShowSide, .binanceShowQuantity, .binanceShowCurrentPrice, .binanceShowEntryPrice, .binanceShowPnL, .binanceShowROE:
             return highlighted ? NSLocalizedString("ON", comment: "TSSettingsIndex") : NSLocalizedString("OFF", comment: "TSSettingsIndex")
         case .passthroughMode:
@@ -123,5 +130,17 @@ enum TSSettingsIndex: Int, CaseIterable {
         let interval = defaults.integer(forKey: HUDUserDefaultsKeyBinanceRefreshInterval)
         let resolvedInterval = interval > 0 ? interval : 15
         return String(format: NSLocalizedString("%ds", comment: "TSSettingsIndex"), resolvedInterval)
+    }
+
+    private static func binanceFocusSymbolSubtitle() -> String {
+        let raw = (GetStandardUserDefaults().string(forKey: HUDUserDefaultsKeyBinanceFocusSymbol) ?? "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if raw.isEmpty {
+            return NSLocalizedString("All", comment: "TSSettingsIndex")
+        }
+        if raw.hasSuffix("USDT") {
+            return String(raw.dropLast(4))
+        }
+        return raw
     }
 }

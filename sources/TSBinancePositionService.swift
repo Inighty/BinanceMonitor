@@ -74,6 +74,7 @@ private struct TSBinanceStreamEnvelope: Decodable {
 }
 
 private struct TSBinanceDisplayEntry {
+    let rawSymbol: String
     let symbol: String
     let side: String
     let quantity: String
@@ -93,6 +94,7 @@ private struct TSBinanceDisplayOptions {
     let showPnL: Bool
     let showRoe: Bool
     let snapshotRefreshInterval: TimeInterval
+    let focusSymbol: String
 }
 
 @objcMembers
@@ -212,13 +214,28 @@ final class TSBinancePositionService: NSObject {
             break
         }
 
-        guard !entries.isEmpty else {
-            attributed.append(NSAttributedString(string: NSLocalizedString("No open futures positions", comment: "TSBinancePositionService"), attributes: baseAttributes))
-            return attributed
-        }
+        let visibleEntries: [TSBinanceDisplayEntry]
+        let remainingCount: Int
+        let forceCentered: Bool
 
-        let visibleCount = centered ? 1 : min(entries.count, focused ? 2 : 3)
-        let visibleEntries = Array(entries.prefix(visibleCount))
+        if !options.focusSymbol.isEmpty {
+            if entries.isEmpty {
+                return NSAttributedString()
+            }
+            let match = entries.first { $0.rawSymbol.uppercased() == options.focusSymbol }
+            visibleEntries = [match ?? entries[0]]
+            remainingCount = 0
+            forceCentered = true
+        } else {
+            guard !entries.isEmpty else {
+                attributed.append(NSAttributedString(string: NSLocalizedString("No open futures positions", comment: "TSBinancePositionService"), attributes: baseAttributes))
+                return attributed
+            }
+            let visibleCount = centered ? 1 : min(entries.count, focused ? 2 : 3)
+            visibleEntries = Array(entries.prefix(visibleCount))
+            remainingCount = entries.count - visibleEntries.count
+            forceCentered = false
+        }
 
         for (index, entry) in visibleEntries.enumerated() {
             if index > 0 {
@@ -230,9 +247,8 @@ final class TSBinancePositionService: NSObject {
         }
 
         let primaryEntry = visibleEntries[0]
-        let remainingCount = entries.count - visibleEntries.count
 
-        if (focused || centered), let secondaryLine = secondaryLineText(for: primaryEntry, options: options) {
+        if (focused || centered || forceCentered), let secondaryLine = secondaryLineText(for: primaryEntry, options: options) {
             attributed.append(NSAttributedString(string: "\n" + secondaryLine, attributes: detailAttributes))
         }
 
@@ -306,11 +322,29 @@ final class TSBinancePositionService: NSObject {
         snapshotState = snapshot
         if let entries {
             displayEntries = entries
+            persistLastKnownSymbols(from: entries)
         }
         latestErrorMessage = error
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: TSBinancePositionServiceDidUpdateNotificationName, object: nil)
         }
+    }
+
+    private func persistLastKnownSymbols(from entries: [TSBinanceDisplayEntry]) {
+        var seen = Set<String>()
+        let symbols = entries.compactMap { entry -> String? in
+            let symbol = entry.rawSymbol
+            if symbol.isEmpty || !seen.insert(symbol).inserted {
+                return nil
+            }
+            return symbol
+        }
+        let defaults = GetStandardUserDefaults()
+        let existing = (defaults.array(forKey: HUDUserDefaultsKeyBinanceLastKnownSymbols) as? [String]) ?? []
+        if existing == symbols {
+            return
+        }
+        defaults.set(symbols, forKey: HUDUserDefaultsKeyBinanceLastKnownSymbols)
     }
 
     private func refreshSnapshot(reason: String) {
@@ -387,6 +421,7 @@ final class TSBinancePositionService: NSObject {
             }
 
             return TSBinanceDisplayEntry(
+                rawSymbol: position.symbol,
                 symbol: self.displaySymbol(for: position.symbol),
                 side: side,
                 quantity: self.trimDecimal(self.quantityMagnitude(from: quantity)),
@@ -717,6 +752,9 @@ final class TSBinancePositionService: NSObject {
     private func loadDisplayOptions() -> TSBinanceDisplayOptions {
         let defaults = GetStandardUserDefaults()
         let refreshInterval = defaults.double(forKey: HUDUserDefaultsKeyBinanceRefreshInterval)
+        let focusRaw = (defaults.string(forKey: HUDUserDefaultsKeyBinanceFocusSymbol) ?? "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .uppercased()
         return TSBinanceDisplayOptions(
             showSymbol: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowSymbol),
             showSide: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowSide),
@@ -725,7 +763,8 @@ final class TSBinancePositionService: NSObject {
             showEntryPrice: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowEntryPrice),
             showPnL: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowPnL),
             showRoe: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowROE),
-            snapshotRefreshInterval: refreshInterval > 0 ? refreshInterval : Self.defaultSnapshotRefreshInterval
+            snapshotRefreshInterval: refreshInterval > 0 ? refreshInterval : Self.defaultSnapshotRefreshInterval,
+            focusSymbol: focusRaw
         )
     }
 
@@ -738,7 +777,8 @@ final class TSBinancePositionService: NSObject {
             showEntryPrice: false,
             showPnL: true,
             showRoe: false,
-            snapshotRefreshInterval: defaultSnapshotRefreshInterval
+            snapshotRefreshInterval: defaultSnapshotRefreshInterval,
+            focusSymbol: ""
         )
     }
 

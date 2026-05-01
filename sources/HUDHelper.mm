@@ -230,6 +230,7 @@ NSUserDefaults *GetStandardUserDefaults(void)
             HUDUserDefaultsKeyBinanceShowPnL: @YES,
             HUDUserDefaultsKeyBinanceShowROE: @NO,
             HUDUserDefaultsKeyBinanceRefreshInterval: @15,
+            HUDUserDefaultsKeyBinanceFocusSymbol: @"",
         }];
     });
     return _userDefaults;

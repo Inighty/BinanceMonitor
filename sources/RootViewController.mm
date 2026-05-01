@@ -610,6 +610,11 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
         return interval != 15;
     }
 
+    if ([key isEqualToString:HUDUserDefaultsKeyBinanceFocusSymbol]) {
+        NSString *focus = [[GetStandardUserDefaults() stringForKey:HUDUserDefaultsKeyBinanceFocusSymbol] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        return focus.length > 0;
+    }
+
     if (IsBinanceStandardToggleKey(key)) {
         return [GetStandardUserDefaults() boolForKey:key];
     }
@@ -651,6 +656,17 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
         return;
     }
 
+    if ([key isEqualToString:HUDUserDefaultsKeyBinanceFocusSymbol]) {
+        if (self.presentedViewController) {
+            [self dismissViewControllerAnimated:YES completion:^{
+                [self presentBinanceFocusSymbolPicker];
+            }];
+        } else {
+            [self presentBinanceFocusSymbolPicker];
+        }
+        return;
+    }
+
     if (IsBinanceStandardToggleKey(key)) {
         BOOL enabled = [GetStandardUserDefaults() boolForKey:key];
         [GetStandardUserDefaults() setBool:!enabled forKey:key];
@@ -688,6 +704,69 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Binance Settings Error", nil) message:message preferredStyle:UIAlertControllerStyleAlert];
     [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Dismiss", nil) style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:alertController animated:YES completion:nil];
+}
+
+- (NSString *)trimmedSymbolDisplay:(NSString *)rawSymbol
+{
+    if ([rawSymbol hasSuffix:@"USDT"] && rawSymbol.length > 4) {
+        return [rawSymbol substringToIndex:rawSymbol.length - 4];
+    }
+    return rawSymbol;
+}
+
+- (void)presentBinanceFocusSymbolPicker
+{
+    NSArray<NSString *> *cached = [GetStandardUserDefaults() arrayForKey:HUDUserDefaultsKeyBinanceLastKnownSymbols];
+    NSMutableArray<NSString *> *symbols = [NSMutableArray array];
+    for (id item in cached) {
+        if ([item isKindOfClass:[NSString class]] && [(NSString *)item length] > 0) {
+            [symbols addObject:(NSString *)item];
+        }
+    }
+
+    NSString *currentFocus = [[GetStandardUserDefaults() stringForKey:HUDUserDefaultsKeyBinanceFocusSymbol] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    if (currentFocus.length > 0 && ![symbols containsObject:currentFocus]) {
+        [symbols insertObject:currentFocus atIndex:0];
+    }
+
+    NSString *message = (symbols.count == 0)
+        ? NSLocalizedString(@"No open positions detected yet. Open the HUD to refresh.", nil)
+        : nil;
+
+    UIAlertController *picker = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Display Symbol", nil)
+                                                                    message:message
+                                                             preferredStyle:UIAlertControllerStyleActionSheet];
+
+    UIAlertAction *allAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"All", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [GetStandardUserDefaults() setObject:@"" forKey:HUDUserDefaultsKeyBinanceFocusSymbol];
+        [GetStandardUserDefaults() synchronize];
+        notify_post(NOTIFY_RELOAD_HUD);
+    }];
+    [picker addAction:allAction];
+
+    for (NSString *rawSymbol in symbols) {
+        NSString *title = [self trimmedSymbolDisplay:rawSymbol];
+        if ([rawSymbol caseInsensitiveCompare:currentFocus] == NSOrderedSame) {
+            title = [title stringByAppendingString:@" ✓"];
+        }
+        UIAlertAction *action = [UIAlertAction actionWithTitle:title style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull selectedAction) {
+            [GetStandardUserDefaults() setObject:rawSymbol forKey:HUDUserDefaultsKeyBinanceFocusSymbol];
+            [GetStandardUserDefaults() synchronize];
+            notify_post(NOTIFY_RELOAD_HUD);
+        }];
+        [picker addAction:action];
+    }
+
+    [picker addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil) style:UIAlertActionStyleCancel handler:nil]];
+
+    UIPopoverPresentationController *popover = picker.popoverPresentationController;
+    if (popover) {
+        popover.sourceView = self.view;
+        popover.sourceRect = CGRectMake(CGRectGetMidX(self.view.bounds), CGRectGetMidY(self.view.bounds), 0, 0);
+        popover.permittedArrowDirections = 0;
+    }
+
+    [self presentViewController:picker animated:YES completion:nil];
 }
 
 - (void)binanceAccountViewControllerDidUpdateCredentials:(TSBinanceAccountViewController * _Nonnull)controller
