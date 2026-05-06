@@ -4,6 +4,7 @@ enum TSSettingsIndex: Int, CaseIterable {
     case binanceAccount = 0
     case binanceUseTestnet
     case binanceRefreshInterval
+    case binanceDisplayMode
     case binanceFocusSymbol
     case binanceShowSymbol
     case binanceShowSide
@@ -12,6 +13,10 @@ enum TSSettingsIndex: Int, CaseIterable {
     case binanceShowEntryPrice
     case binanceShowPnL
     case binanceShowROE
+    case binanceShowTotalEquity
+    case binanceShowFloatingPnL
+    case binanceShowFloatingPnLRate
+    case binanceShowTotalROI
     case passthroughMode
     case keepInPlace
     case hideAtSnapshot
@@ -27,6 +32,8 @@ enum TSSettingsIndex: Int, CaseIterable {
             return HUDUserDefaultsKeyBinanceUseTestnet
         case .binanceRefreshInterval:
             return HUDUserDefaultsKeyBinanceRefreshInterval
+        case .binanceDisplayMode:
+            return HUDUserDefaultsKeyBinanceDisplayMode
         case .binanceFocusSymbol:
             return HUDUserDefaultsKeyBinanceFocusSymbol
         case .binanceShowSymbol:
@@ -43,6 +50,14 @@ enum TSSettingsIndex: Int, CaseIterable {
             return HUDUserDefaultsKeyBinanceShowPnL
         case .binanceShowROE:
             return HUDUserDefaultsKeyBinanceShowROE
+        case .binanceShowTotalEquity:
+            return HUDUserDefaultsKeyBinanceShowTotalEquity
+        case .binanceShowFloatingPnL:
+            return HUDUserDefaultsKeyBinanceShowFloatingPnL
+        case .binanceShowFloatingPnLRate:
+            return HUDUserDefaultsKeyBinanceShowFloatingPnLRate
+        case .binanceShowTotalROI:
+            return HUDUserDefaultsKeyBinanceShowTotalROI
         case .passthroughMode:
             return HUDUserDefaultsKeyPassthroughMode
         case .keepInPlace:
@@ -66,6 +81,8 @@ enum TSSettingsIndex: Int, CaseIterable {
             return NSLocalizedString("Binance Environment", comment: "TSSettingsIndex")
         case .binanceRefreshInterval:
             return NSLocalizedString("Refresh Interval", comment: "TSSettingsIndex")
+        case .binanceDisplayMode:
+            return NSLocalizedString("Display Mode", comment: "TSSettingsIndex")
         case .binanceFocusSymbol:
             return NSLocalizedString("Display Symbol", comment: "TSSettingsIndex")
         case .binanceShowSymbol:
@@ -82,6 +99,14 @@ enum TSSettingsIndex: Int, CaseIterable {
             return NSLocalizedString("Show PnL", comment: "TSSettingsIndex")
         case .binanceShowROE:
             return NSLocalizedString("Show ROE", comment: "TSSettingsIndex")
+        case .binanceShowTotalEquity:
+            return NSLocalizedString("Show Total Equity", comment: "TSSettingsIndex")
+        case .binanceShowFloatingPnL:
+            return NSLocalizedString("Show Floating PnL", comment: "TSSettingsIndex")
+        case .binanceShowFloatingPnLRate:
+            return NSLocalizedString("Show Floating PnL Rate", comment: "TSSettingsIndex")
+        case .binanceShowTotalROI:
+            return NSLocalizedString("Show Total ROI", comment: "TSSettingsIndex")
         case .passthroughMode:
             return NSLocalizedString("Pass-through", comment: "TSSettingsIndex")
         case .keepInPlace:
@@ -105,9 +130,12 @@ enum TSSettingsIndex: Int, CaseIterable {
             return highlighted ? NSLocalizedString("Testnet", comment: "TSSettingsIndex") : NSLocalizedString("Mainnet", comment: "TSSettingsIndex")
         case .binanceRefreshInterval:
             return TSSettingsIndex.binanceRefreshIntervalSubtitle()
+        case .binanceDisplayMode:
+            return highlighted ? NSLocalizedString("Summary", comment: "TSSettingsIndex") : NSLocalizedString("Positions", comment: "TSSettingsIndex")
         case .binanceFocusSymbol:
             return TSSettingsIndex.binanceFocusSymbolSubtitle()
-        case .binanceShowSymbol, .binanceShowSide, .binanceShowQuantity, .binanceShowCurrentPrice, .binanceShowEntryPrice, .binanceShowPnL, .binanceShowROE:
+        case .binanceShowSymbol, .binanceShowSide, .binanceShowQuantity, .binanceShowCurrentPrice, .binanceShowEntryPrice, .binanceShowPnL, .binanceShowROE,
+             .binanceShowTotalEquity, .binanceShowFloatingPnL, .binanceShowFloatingPnLRate, .binanceShowTotalROI:
             return highlighted ? NSLocalizedString("ON", comment: "TSSettingsIndex") : NSLocalizedString("OFF", comment: "TSSettingsIndex")
         case .passthroughMode:
             if restartRequired {

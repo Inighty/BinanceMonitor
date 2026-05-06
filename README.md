@@ -23,6 +23,11 @@ The original network speed display has been removed. The HUD now focuses only on
   - `Entry Price`
   - `PnL`
   - `ROE`
+- Adds an Account Summary mode that only shows account-level metrics:
+  - `Total Equity` (current funds)
+  - `Floating PnL`
+  - `Floating PnL Rate`
+  - `Total ROI`
 - Lets you configure refresh interval from the app settings.
 - Keeps the existing HUD placement, appearance, screenshot hiding, and focus interaction behavior.
 

@@ -36,6 +36,11 @@ static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceShowROE = @"binanceShow
 static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceRefreshInterval = @"binanceRefreshInterval";
 static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceFocusSymbol = @"binanceFocusSymbol";
 static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceLastKnownSymbols = @"binanceLastKnownSymbols";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceDisplayMode = @"binanceDisplayMode";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceShowTotalEquity = @"binanceShowTotalEquity";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceShowFloatingPnL = @"binanceShowFloatingPnL";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceShowFloatingPnLRate = @"binanceShowFloatingPnLRate";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceShowTotalROI = @"binanceShowTotalROI";
 
 static HUDUserDefaultsKey const HUDUserDefaultsKeyUsesCustomFontSize = @"usesCustomFontSize";
 static HUDUserDefaultsKey const HUDUserDefaultsKeyRealCustomFontSize = @"realCustomFontSize";

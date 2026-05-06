@@ -231,6 +231,11 @@ NSUserDefaults *GetStandardUserDefaults(void)
             HUDUserDefaultsKeyBinanceShowROE: @NO,
             HUDUserDefaultsKeyBinanceRefreshInterval: @15,
             HUDUserDefaultsKeyBinanceFocusSymbol: @"",
+            HUDUserDefaultsKeyBinanceDisplayMode: @"positions",
+            HUDUserDefaultsKeyBinanceShowTotalEquity: @YES,
+            HUDUserDefaultsKeyBinanceShowFloatingPnL: @YES,
+            HUDUserDefaultsKeyBinanceShowFloatingPnLRate: @NO,
+            HUDUserDefaultsKeyBinanceShowTotalROI: @NO,
         }];
     });
     return _userDefaults;

@@ -47,6 +47,10 @@ static BOOL IsBinanceStandardToggleKey(NSString * _Nonnull key)
             HUDUserDefaultsKeyBinanceShowEntryPrice,
             HUDUserDefaultsKeyBinanceShowPnL,
             HUDUserDefaultsKeyBinanceShowROE,
+            HUDUserDefaultsKeyBinanceShowTotalEquity,
+            HUDUserDefaultsKeyBinanceShowFloatingPnL,
+            HUDUserDefaultsKeyBinanceShowFloatingPnLRate,
+            HUDUserDefaultsKeyBinanceShowTotalROI,
         ]];
     });
     return [keys containsObject:key];
@@ -610,6 +614,11 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
         return interval != 15;
     }
 
+    if ([key isEqualToString:HUDUserDefaultsKeyBinanceDisplayMode]) {
+        NSString *mode = [GetStandardUserDefaults() stringForKey:HUDUserDefaultsKeyBinanceDisplayMode];
+        return [mode isEqualToString:@"summary"];
+    }
+
     if ([key isEqualToString:HUDUserDefaultsKeyBinanceFocusSymbol]) {
         NSString *focus = [[GetStandardUserDefaults() stringForKey:HUDUserDefaultsKeyBinanceFocusSymbol] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         return focus.length > 0;
@@ -651,6 +660,15 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
         NSUInteger currentIndex = [options indexOfObject:@(currentInterval)];
         NSUInteger nextIndex = (currentIndex == NSNotFound ? 0 : (currentIndex + 1) % options.count);
         [GetStandardUserDefaults() setInteger:options[nextIndex].integerValue forKey:HUDUserDefaultsKeyBinanceRefreshInterval];
+        [GetStandardUserDefaults() synchronize];
+        notify_post(NOTIFY_RELOAD_HUD);
+        return;
+    }
+
+    if ([key isEqualToString:HUDUserDefaultsKeyBinanceDisplayMode]) {
+        NSString *current = [GetStandardUserDefaults() stringForKey:HUDUserDefaultsKeyBinanceDisplayMode];
+        NSString *next = [current isEqualToString:@"summary"] ? @"positions" : @"summary";
+        [GetStandardUserDefaults() setObject:next forKey:HUDUserDefaultsKeyBinanceDisplayMode];
         [GetStandardUserDefaults() synchronize];
         notify_post(NOTIFY_RELOAD_HUD);
         return;

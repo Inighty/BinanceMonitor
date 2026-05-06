@@ -59,6 +59,20 @@ private struct TSBinancePositionRisk: Decodable {
     let updateTime: Int64?
 }
 
+private struct TSBinanceAccountResponse: Decodable {
+    let totalWalletBalance: String
+    let totalUnrealizedProfit: String
+    let totalMarginBalance: String
+    let totalInitialMargin: String
+}
+
+private struct TSBinanceAccountSummary {
+    let totalEquity: Decimal
+    let totalWalletBalance: Decimal
+    let totalUnrealizedProfit: Decimal
+    let totalInitialMargin: Decimal
+}
+
 private struct TSBinanceListenKeyResponse: Decodable {
     let listenKey: String
 }
@@ -85,7 +99,13 @@ private struct TSBinanceDisplayEntry {
     let sortValue: Decimal
 }
 
+private enum TSBinanceDisplayMode: String {
+    case positions
+    case summary
+}
+
 private struct TSBinanceDisplayOptions {
+    let displayMode: TSBinanceDisplayMode
     let showSymbol: Bool
     let showSide: Bool
     let showQuantity: Bool
@@ -93,6 +113,10 @@ private struct TSBinanceDisplayOptions {
     let showEntryPrice: Bool
     let showPnL: Bool
     let showRoe: Bool
+    let showTotalEquity: Bool
+    let showFloatingPnL: Bool
+    let showFloatingPnLRate: Bool
+    let showTotalROI: Bool
     let snapshotRefreshInterval: TimeInterval
     let focusSymbol: String
 }
@@ -119,6 +143,7 @@ final class TSBinancePositionService: NSObject {
     private var currentConfig: TSBinanceConfig?
     private var displayOptions = TSBinancePositionService.defaultDisplayOptions()
     private var displayEntries: [TSBinanceDisplayEntry] = []
+    private var accountSummary: TSBinanceAccountSummary?
     private var lastUpdatedAt: Date?
     private var latestErrorMessage: String?
     private var isStarted = false
@@ -170,12 +195,14 @@ final class TSBinancePositionService: NSObject {
     func hudAttributedText(forCentered centered: Bool, focused: Bool, fontSize: CGFloat, fontWeight: CGFloat) -> NSAttributedString {
         var state: TSBinanceSnapshotState = .notConfigured
         var entries: [TSBinanceDisplayEntry] = []
+        var summary: TSBinanceAccountSummary?
         var options = Self.defaultDisplayOptions()
         var latestError: String?
 
         workQueue.sync {
             state = snapshotState
             entries = displayEntries
+            summary = accountSummary
             options = displayOptions
             latestError = latestErrorMessage
         }
@@ -212,6 +239,16 @@ final class TSBinancePositionService: NSObject {
             return attributed
         case .ready:
             break
+        }
+
+        if options.displayMode == .summary {
+            return summaryAttributedText(
+                summary: summary,
+                options: options,
+                baseAttributes: baseAttributes,
+                detailAttributes: detailAttributes,
+                mutedAttributes: mutedAttributes
+            )
         }
 
         let visibleEntries: [TSBinanceDisplayEntry]
@@ -260,6 +297,65 @@ final class TSBinancePositionService: NSObject {
         }
 
         return attributed
+    }
+
+    private func summaryAttributedText(
+        summary: TSBinanceAccountSummary?,
+        options: TSBinanceDisplayOptions,
+        baseAttributes: [NSAttributedString.Key: Any],
+        detailAttributes: [NSAttributedString.Key: Any],
+        mutedAttributes: [NSAttributedString.Key: Any]
+    ) -> NSAttributedString {
+        let attributed = NSMutableAttributedString()
+
+        guard let summary else {
+            attributed.append(NSAttributedString(string: NSLocalizedString("Loading Binance account...", comment: "TSBinancePositionService"), attributes: baseAttributes))
+            return attributed
+        }
+
+        var mainComponents: [String] = []
+        if options.showTotalEquity {
+            mainComponents.append(trimDecimal(summary.totalEquity))
+        }
+        if options.showFloatingPnL {
+            mainComponents.append(signedString(for: summary.totalUnrealizedProfit, suffix: ""))
+        }
+
+        var detailComponents: [String] = []
+        if options.showFloatingPnLRate {
+            let rate = floatingPnLRate(for: summary)
+            detailComponents.append("PNL " + signedString(for: rate, suffix: "%"))
+        }
+        if options.showTotalROI {
+            let roi = totalROI(for: summary)
+            detailComponents.append("ROI " + signedString(for: roi, suffix: "%"))
+        }
+
+        if mainComponents.isEmpty && detailComponents.isEmpty {
+            mainComponents.append(trimDecimal(summary.totalEquity))
+        }
+
+        if !mainComponents.isEmpty {
+            attributed.append(NSAttributedString(string: mainComponents.joined(separator: " "), attributes: baseAttributes))
+        }
+
+        if !detailComponents.isEmpty {
+            let prefix = mainComponents.isEmpty ? "" : "\n"
+            attributed.append(NSAttributedString(string: prefix + detailComponents.joined(separator: "  "), attributes: detailAttributes))
+        }
+
+        return attributed
+    }
+
+    private func floatingPnLRate(for summary: TSBinanceAccountSummary) -> Decimal {
+        let denominator = summary.totalInitialMargin != 0 ? summary.totalInitialMargin : summary.totalWalletBalance
+        guard denominator != 0 else { return 0 }
+        return (summary.totalUnrealizedProfit / denominator) * 100
+    }
+
+    private func totalROI(for summary: TSBinanceAccountSummary) -> Decimal {
+        guard summary.totalWalletBalance != 0 else { return 0 }
+        return (summary.totalUnrealizedProfit / summary.totalWalletBalance) * 100
     }
 
     private func configureAndStartIfNeeded(forceRestart: Bool) {
@@ -353,6 +449,14 @@ final class TSBinancePositionService: NSObject {
             return
         }
 
+        if displayOptions.displayMode == .summary {
+            refreshAccountSummary(config: config)
+        } else {
+            refreshPositionRisk(config: config)
+        }
+    }
+
+    private func refreshPositionRisk(config: TSBinanceConfig) {
         performSignedRequest(
             config: config,
             method: "GET",
@@ -387,6 +491,55 @@ final class TSBinancePositionService: NSObject {
                     self.latestErrorMessage = error.localizedDescription
                     if self.displayEntries.isEmpty {
                         self.updateState(snapshot: .failed(self.userFacingErrorMessage(from: error)), error: error.localizedDescription, entries: nil)
+                    } else {
+                        self.postUpdateNotification()
+                    }
+                }
+            }
+        }
+    }
+
+    private func refreshAccountSummary(config: TSBinanceConfig) {
+        performSignedRequest(
+            config: config,
+            method: "GET",
+            path: "/fapi/v2/account",
+            securityType: .signed,
+            queryItems: []
+        ) { [weak self] result in
+            guard let self else { return }
+            self.workQueue.async {
+                guard config == self.currentConfig else { return }
+
+                switch result {
+                case .success(let data):
+                    do {
+                        let response = try JSONDecoder().decode(TSBinanceAccountResponse.self, from: data)
+                        let summary = TSBinanceAccountSummary(
+                            totalEquity: self.decimal(from: response.totalMarginBalance) ?? 0,
+                            totalWalletBalance: self.decimal(from: response.totalWalletBalance) ?? 0,
+                            totalUnrealizedProfit: self.decimal(from: response.totalUnrealizedProfit) ?? 0,
+                            totalInitialMargin: self.decimal(from: response.totalInitialMargin) ?? 0
+                        )
+                        self.lastUpdatedAt = Date()
+                        self.accountSummary = summary
+                        self.snapshotState = .ready
+                        self.latestErrorMessage = nil
+                        self.postUpdateNotification()
+                    } catch {
+                        self.latestErrorMessage = error.localizedDescription
+                        if self.accountSummary == nil {
+                            self.snapshotState = .failed(NSLocalizedString("Unable to decode Binance account", comment: "TSBinancePositionService"))
+                            self.postUpdateNotification()
+                        } else {
+                            self.postUpdateNotification()
+                        }
+                    }
+                case .failure(let error):
+                    self.latestErrorMessage = error.localizedDescription
+                    if self.accountSummary == nil {
+                        self.snapshotState = .failed(self.userFacingErrorMessage(from: error))
+                        self.postUpdateNotification()
                     } else {
                         self.postUpdateNotification()
                     }
@@ -755,7 +908,12 @@ final class TSBinancePositionService: NSObject {
         let focusRaw = (defaults.string(forKey: HUDUserDefaultsKeyBinanceFocusSymbol) ?? "")
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .uppercased()
+        let modeRaw = (defaults.string(forKey: HUDUserDefaultsKeyBinanceDisplayMode) ?? "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        let mode = TSBinanceDisplayMode(rawValue: modeRaw) ?? .positions
         return TSBinanceDisplayOptions(
+            displayMode: mode,
             showSymbol: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowSymbol),
             showSide: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowSide),
             showQuantity: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowQuantity),
@@ -763,6 +921,10 @@ final class TSBinancePositionService: NSObject {
             showEntryPrice: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowEntryPrice),
             showPnL: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowPnL),
             showRoe: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowROE),
+            showTotalEquity: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowTotalEquity),
+            showFloatingPnL: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowFloatingPnL),
+            showFloatingPnLRate: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowFloatingPnLRate),
+            showTotalROI: defaults.bool(forKey: HUDUserDefaultsKeyBinanceShowTotalROI),
             snapshotRefreshInterval: refreshInterval > 0 ? refreshInterval : Self.defaultSnapshotRefreshInterval,
             focusSymbol: focusRaw
         )
@@ -770,6 +932,7 @@ final class TSBinancePositionService: NSObject {
 
     private static func defaultDisplayOptions() -> TSBinanceDisplayOptions {
         TSBinanceDisplayOptions(
+            displayMode: .positions,
             showSymbol: true,
             showSide: true,
             showQuantity: false,
@@ -777,6 +940,10 @@ final class TSBinancePositionService: NSObject {
             showEntryPrice: false,
             showPnL: true,
             showRoe: false,
+            showTotalEquity: true,
+            showFloatingPnL: true,
+            showFloatingPnLRate: false,
+            showTotalROI: false,
             snapshotRefreshInterval: defaultSnapshotRefreshInterval,
             focusSymbol: ""
         )
