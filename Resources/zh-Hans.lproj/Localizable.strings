@@ -3,6 +3,7 @@
 "API Key cannot be empty." = "API Key 不能为空。";
 "API Secret" = "API Secret";
 "API Secret cannot be empty." = "API Secret 不能为空。";
+"Account" = "账户";
 "Activate the Binance futures position HUD." = "开启币安合约持仓悬浮窗。";
 "An unknown error occurred." = "发生未知错误。";
 "Appearance" = "外观";
@@ -14,7 +15,10 @@
 "Binance network unavailable" = "币安网络不可用";
 "Cancel" = "取消";
 "Choose an action below." = "请选择以下操作。";
+"Choose which columns are shown for each open position." = "选择每个持仓显示哪些列。";
+"Choose which figures are shown in the account summary." = "选择账户概览显示哪些数字。";
 "Classic" = "经典";
+"Data Source" = "数据";
 "Clear" = "清除";
 "Clear API Credentials" = "清除 API 凭据";
 "Clear Saved Credentials" = "清除已保存凭据";
@@ -30,6 +34,7 @@
 "Follow" = "跟随";
 "Hide" = "隐藏";
 "Hide @snapshot" = "截图时隐藏";
+"HUD Behavior" = "HUD 行为";
 "Hide Secret" = "隐藏 Secret";
 "Inverted" = "反色";
 "Keep In-place" = "锁定位置";
@@ -50,6 +55,7 @@
 "Pass-through" = "触摸穿透";
 "Paste API Key" = "粘贴 API Key";
 "Paste API Secret" = "粘贴 API Secret";
+"Position Fields" = "持仓字段";
 "Positions" = "持仓";
 "Re-open to apply" = "重新打开后生效";
 "Refresh Interval" = "刷新间隔";
@@ -71,6 +77,7 @@
 "Size" = "尺寸";
 "Standard" = "标准";
 "Summary" = "概览";
+"Summary Fields" = "汇总字段";
 "Tap that button on the center again,\nto toggle ON/OFF “Dynamic Island” mode." = "再次点击中间按钮，\n可切换“灵动岛”模式的开关。";
 "Testnet" = "测试网";
 "This will remove the saved Binance API Key and Secret from the device." = "这会从设备中删除已保存的 Binance API Key 和 Secret。";

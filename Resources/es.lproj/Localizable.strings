@@ -5,6 +5,7 @@
 "API Secret cannot be empty." = "El API Secret no puede estar vacío.";
 "Activate the Binance futures position HUD." = "Activa el HUD de posiciones de futuros de Binance.";
 "An unknown error occurred." = "Se produjo un error desconocido.";
+"Account" = "Cuenta";
 "Appearance" = "Apariencia";
 "Binance API not configured" = "La API de Binance no está configurada";
 "Binance Account" = "Cuenta de Binance";
@@ -14,12 +15,15 @@
 "Binance network unavailable" = "La red de Binance no está disponible";
 "Cancel" = "Cancelar";
 "Choose an action below." = "Elige una acción a continuación.";
+"Choose which columns are shown for each open position." = "Elige las columnas que se mostrarán para cada posición abierta.";
+"Choose which figures are shown in the account summary." = "Elige las cifras que se mostrarán en el resumen de la cuenta.";
 "Classic" = "Clásico";
 "Clear" = "Borrar";
 "Clear API Credentials" = "Borrar credenciales de la API";
 "Clear Saved Credentials" = "Borrar credenciales guardadas";
 "Clipboard is empty or paste access was denied." = "El portapapeles está vacío o se denegó el acceso para pegar.";
 "Configured" = "Configurado";
+"Data Source" = "Datos";
 "Deactivate the Binance futures position HUD." = "Desactiva el HUD de posiciones de futuros de Binance.";
 "Developer Area" = "Área de desarrollo";
 "Display Mode" = "Modo de visualización";
@@ -30,6 +34,7 @@
 "Follow" = "Seguir";
 "Hide" = "Ocultar";
 "Hide @snapshot" = "Ocultar en capturas";
+"HUD Behavior" = "Comportamiento del HUD";
 "Hide Secret" = "Ocultar Secret";
 "Inverted" = "Invertido";
 "Keep In-place" = "Mantener en posición";
@@ -50,6 +55,7 @@
 "Pass-through" = "Pass-through";
 "Paste API Key" = "Pegar API Key";
 "Paste API Secret" = "Pegar API Secret";
+"Position Fields" = "Campos de posición";
 "Positions" = "Posiciones";
 "Re-open to apply" = "Vuelve a abrir para aplicar";
 "Refresh Interval" = "Intervalo de actualización";
@@ -71,6 +77,7 @@
 "Size" = "Tamaño";
 "Standard" = "Estándar";
 "Summary" = "Resumen";
+"Summary Fields" = "Campos del resumen";
 "Tap that button on the center again,\nto toggle ON/OFF “Dynamic Island” mode." = "Toca de nuevo el botón del centro\npara activar o desactivar el modo “Isla dinámica”.";
 "Testnet" = "Testnet";
 "This will remove the saved Binance API Key and Secret from the device." = "Esto eliminará del dispositivo la API Key y el Secret guardados de Binance.";

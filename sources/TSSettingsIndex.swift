@@ -1,5 +1,10 @@
 import Foundation
 
+@objc public enum TSSettingItemKind: Int {
+    case toggle
+    case value
+}
+
 enum TSSettingsIndex: Int, CaseIterable {
     case binanceAccount = 0
     case binanceUseTestnet
@@ -119,6 +124,16 @@ enum TSSettingsIndex: Int, CaseIterable {
             return NSLocalizedString("Landscape", comment: "TSSettingsIndex")
         case .usesLargeFont:
             return NSLocalizedString("Size", comment: "TSSettingsIndex")
+        }
+    }
+
+    var kind: TSSettingItemKind {
+        switch self {
+        case .binanceAccount, .binanceUseTestnet, .binanceRefreshInterval, .binanceDisplayMode, .binanceFocusSymbol,
+             .usesInvertedColor, .usesRotation, .usesLargeFont:
+            return .value
+        default:
+            return .toggle
         }
     }
 

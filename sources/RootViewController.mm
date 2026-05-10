@@ -655,13 +655,7 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
     }
 
     if ([key isEqualToString:HUDUserDefaultsKeyBinanceRefreshInterval]) {
-        NSArray<NSNumber *> *options = BinanceRefreshIntervalOptions();
-        NSInteger currentInterval = [GetStandardUserDefaults() integerForKey:HUDUserDefaultsKeyBinanceRefreshInterval];
-        NSUInteger currentIndex = [options indexOfObject:@(currentInterval)];
-        NSUInteger nextIndex = (currentIndex == NSNotFound ? 0 : (currentIndex + 1) % options.count);
-        [GetStandardUserDefaults() setInteger:options[nextIndex].integerValue forKey:HUDUserDefaultsKeyBinanceRefreshInterval];
-        [GetStandardUserDefaults() synchronize];
-        notify_post(NOTIFY_RELOAD_HUD);
+        [self presentBinanceRefreshIntervalPicker];
         return;
     }
 
@@ -675,13 +669,7 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
     }
 
     if ([key isEqualToString:HUDUserDefaultsKeyBinanceFocusSymbol]) {
-        if (self.presentedViewController) {
-            [self dismissViewControllerAnimated:YES completion:^{
-                [self presentBinanceFocusSymbolPicker];
-            }];
-        } else {
-            [self presentBinanceFocusSymbolPicker];
-        }
+        [self presentBinanceFocusSymbolPicker];
         return;
     }
 
@@ -732,6 +720,53 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
     return rawSymbol;
 }
 
+- (UIViewController *)topmostPresentedController
+{
+    UIViewController *topController = self;
+    while (topController.presentedViewController) {
+        topController = topController.presentedViewController;
+    }
+    return topController;
+}
+
+- (void)presentBinanceRefreshIntervalPicker
+{
+    NSArray<NSNumber *> *options = BinanceRefreshIntervalOptions();
+    NSInteger currentInterval = [GetStandardUserDefaults() integerForKey:HUDUserDefaultsKeyBinanceRefreshInterval];
+    if (currentInterval <= 0) {
+        currentInterval = 15;
+    }
+
+    UIAlertController *picker = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Refresh Interval", nil)
+                                                                    message:nil
+                                                             preferredStyle:UIAlertControllerStyleActionSheet];
+
+    for (NSNumber *option in options) {
+        NSString *title = [NSString stringWithFormat:NSLocalizedString(@"%ds", nil), option.intValue];
+        if (option.integerValue == currentInterval) {
+            title = [title stringByAppendingString:@" ✓"];
+        }
+        UIAlertAction *action = [UIAlertAction actionWithTitle:title style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull selectedAction) {
+            [GetStandardUserDefaults() setInteger:option.integerValue forKey:HUDUserDefaultsKeyBinanceRefreshInterval];
+            [GetStandardUserDefaults() synchronize];
+            notify_post(NOTIFY_RELOAD_HUD);
+        }];
+        [picker addAction:action];
+    }
+
+    [picker addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil) style:UIAlertActionStyleCancel handler:nil]];
+
+    UIViewController *presenter = [self topmostPresentedController];
+    UIPopoverPresentationController *popover = picker.popoverPresentationController;
+    if (popover) {
+        popover.sourceView = presenter.view;
+        popover.sourceRect = CGRectMake(CGRectGetMidX(presenter.view.bounds), CGRectGetMidY(presenter.view.bounds), 0, 0);
+        popover.permittedArrowDirections = 0;
+    }
+
+    [presenter presentViewController:picker animated:YES completion:nil];
+}
+
 - (void)presentBinanceFocusSymbolPicker
 {
     NSArray<NSString *> *cached = [GetStandardUserDefaults() arrayForKey:HUDUserDefaultsKeyBinanceLastKnownSymbols];
@@ -777,14 +812,15 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
 
     [picker addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil) style:UIAlertActionStyleCancel handler:nil]];
 
+    UIViewController *presenter = [self topmostPresentedController];
     UIPopoverPresentationController *popover = picker.popoverPresentationController;
     if (popover) {
-        popover.sourceView = self.view;
-        popover.sourceRect = CGRectMake(CGRectGetMidX(self.view.bounds), CGRectGetMidY(self.view.bounds), 0, 0);
+        popover.sourceView = presenter.view;
+        popover.sourceRect = CGRectMake(CGRectGetMidX(presenter.view.bounds), CGRectGetMidY(presenter.view.bounds), 0, 0);
         popover.permittedArrowDirections = 0;
     }
 
-    [self presentViewController:picker animated:YES completion:nil];
+    [presenter presentViewController:picker animated:YES completion:nil];
 }
 
 - (void)binanceAccountViewControllerDidUpdateCredentials:(TSBinanceAccountViewController * _Nonnull)controller
@@ -902,11 +938,19 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
     settingsViewController.delegate = self;
     settingsViewController.alreadyLaunched = _isRemoteHUDActive;
 
-    SPLarkTransitioningDelegate *transitioningDelegate = [[SPLarkTransitioningDelegate alloc] init];
-    settingsViewController.transitioningDelegate = transitioningDelegate;
-    settingsViewController.modalPresentationStyle = UIModalPresentationCustom;
-    settingsViewController.modalPresentationCapturesStatusBarAppearance = YES;
-    [self presentViewController:settingsViewController animated:YES completion:nil];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:settingsViewController];
+    if (@available(iOS 15.0, *)) {
+        UISheetPresentationController *sheetController = navigationController.sheetPresentationController;
+        if (sheetController) {
+            sheetController.detents = @[UISheetPresentationControllerDetent.mediumDetent, UISheetPresentationControllerDetent.largeDetent];
+            sheetController.prefersGrabberVisible = YES;
+            sheetController.preferredCornerRadius = 24.0;
+            sheetController.prefersScrollingExpandsWhenScrolledToEdge = YES;
+        }
+    }
+    navigationController.modalPresentationStyle = UIModalPresentationPageSheet;
+    navigationController.modalPresentationCapturesStatusBarAppearance = YES;
+    [self presentViewController:navigationController animated:YES completion:nil];
 }
 
 - (void)verticalSizeClassUpdated

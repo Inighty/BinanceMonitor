@@ -5,6 +5,7 @@
 "API Secret cannot be empty." = "API Secret cannot be empty.";
 "Activate the Binance futures position HUD." = "Activate the Binance futures position HUD.";
 "An unknown error occurred." = "An unknown error occurred.";
+"Account" = "Account";
 "Appearance" = "Appearance";
 "Binance API not configured" = "Binance API not configured";
 "Binance Account" = "Binance Account";
@@ -14,12 +15,15 @@
 "Binance network unavailable" = "Binance network unavailable";
 "Cancel" = "Cancel";
 "Choose an action below." = "Choose an action below.";
+"Choose which columns are shown for each open position." = "Choose which columns are shown for each open position.";
+"Choose which figures are shown in the account summary." = "Choose which figures are shown in the account summary.";
 "Classic" = "Classic";
 "Clear" = "Clear";
 "Clear API Credentials" = "Clear API Credentials";
 "Clear Saved Credentials" = "Clear Saved Credentials";
 "Clipboard is empty or paste access was denied." = "Clipboard is empty or paste access was denied.";
 "Configured" = "Configured";
+"Data Source" = "Data Source";
 "Deactivate the Binance futures position HUD." = "Deactivate the Binance futures position HUD.";
 "Developer Area" = "Developer Area";
 "Display Mode" = "Display Mode";
@@ -30,6 +34,7 @@
 "Follow" = "Follow";
 "Hide" = "Hide";
 "Hide @snapshot" = "Hide @snapshot";
+"HUD Behavior" = "HUD Behavior";
 "Hide Secret" = "Hide Secret";
 "Inverted" = "Inverted";
 "Keep In-place" = "Keep In-place";
@@ -50,6 +55,7 @@
 "Pass-through" = "Pass-through";
 "Paste API Key" = "Paste API Key";
 "Paste API Secret" = "Paste API Secret";
+"Position Fields" = "Position Fields";
 "Positions" = "Positions";
 "Re-open to apply" = "Re-open to apply";
 "Refresh Interval" = "Refresh Interval";
@@ -71,6 +77,7 @@
 "Size" = "Size";
 "Standard" = "Standard";
 "Summary" = "Summary";
+"Summary Fields" = "Summary Fields";
 "Tap that button on the center again,\nto toggle ON/OFF “Dynamic Island” mode." = "Tap that button on the center again,\nto toggle ON/OFF “Dynamic Island” mode.";
 "Testnet" = "Testnet";
 "This will remove the saved Binance API Key and Secret from the device." = "This will remove the saved Binance API Key and Secret from the device.";
