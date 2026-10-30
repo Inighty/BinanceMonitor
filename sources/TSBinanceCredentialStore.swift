@@ -190,7 +190,7 @@ public final class TSBinanceCredentialStore: NSObject {
 
     @objc(updateAccountWithId:name:apiKey:secret:useTestnet:error:)
     public func updateAccount(id: String, name: String, apiKey: String, secret: String, useTestnet: Bool) throws {
-        var accounts = allAccounts()
+        let accounts = allAccounts()
         guard let index = accounts.firstIndex(where: { $0.id == id }) else {
             throw NSError(
                 domain: "TSBinanceCredentialStore",

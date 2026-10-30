@@ -574,7 +574,7 @@ final class TSBinanceAccountViewController: UIViewController, UIGestureRecognize
     }
 }
 
-private final class TextFieldPasteReceiver: UIView, UIPasteConfigurationSupporting {
+private final class TextFieldPasteReceiver: UIView {
     private weak var targetTextField: UITextField?
     private let onError: (Error) -> Void
 
