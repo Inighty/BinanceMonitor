@@ -11,6 +11,7 @@
 
 #import "HUDPresetPosition.h"
 #import "HUDRootViewController.h"
+#import "HUDHelper.h"
 #import "HUDBackdropLabel.h"
 #if __has_include("BinanceMonitor-Swift.h")
 #import "BinanceMonitor-Swift.h"
@@ -35,6 +36,7 @@
 #define NOTIFY_LS_APP_CHANGED  "com.apple.LaunchServices.ApplicationsChanged"
 
 @interface HUDRootViewController (Internal)
+- (void)reloadUserDefaults;
 - (void)refreshHUDContent;
 - (void)updateHUDLabel;
 - (void)updateOrientation:(UIInterfaceOrientation)orientation animateWithDuration:(NSTimeInterval)duration;
