@@ -166,7 +166,7 @@ final class TSBinancePositionService: NSObject {
     private static let reconnectBaseDelay: TimeInterval = 3
     private static let maxReconnectDelay: TimeInterval = 30
 
-    private let workQueue = DispatchQueue(label: "com.inighty.binancehud.binance.service")
+    private let workQueue = DispatchQueue(label: "com.inighty.binancemonitor.binance.service")
     private lazy var session: URLSession = {
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 10

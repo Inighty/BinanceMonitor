@@ -17,7 +17,7 @@
 #import "AXEventRepresentation.h"
 #import "UIApplication+Private.h"
 
-#define PID_PATH "/var/mobile/Library/Caches/com.inighty.binancehud.pid"
+#define PID_PATH "/var/mobile/Library/Caches/com.inighty.binancemonitor.pid"
 
 static __used
 NSString *mDeviceModel(void) {
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 #if !TARGET_OS_SIMULATOR
         pidPath = JBROOT_PATH_NSSTRING(@"" PID_PATH);
 #else
-        pidPath = [[[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask].firstObject path] stringByAppendingPathComponent:@"com.inighty.binancehud.pid"];
+        pidPath = [[[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask].firstObject path] stringByAppendingPathComponent:@"com.inighty.binancemonitor.pid"];
 #endif
 
         if (strcmp(argv[1], "-hud") == 0)

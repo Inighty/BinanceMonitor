@@ -1,3 +1,9 @@
-# Bug Fixes
+# BinanceMonitor 2.0-13
 
-- Fix a bug in App Intents.
+## Features
+
+- **Binance USD-M Futures Monitor**: Replace TrollSpeed network speed HUD with Binance contract position monitoring.
+- **Real-Time Data Streaming**: Support both REST snapshot API (`/fapi/v2/positionRisk`, `/fapi/v2/account`) and WebSocket streams (`!markPrice@arr@1s` mark price stream and user data stream).
+- **Secure Keychain Storage**: Store read-only API Key and Secret securely in iOS Keychain.
+- **Configurable Display Options**: Toggle display for Symbol, Side, Quantity, Mark Price, Entry Price, PnL, ROE, or Account Summary (Total Equity, Floating PnL, PnL Rate, Total ROI).
+- **Position & Appearance Customization**: Custom font size, HUD position offset, touch pass-through, landscape following, and screenshot hiding.

@@ -12,7 +12,9 @@
 #import "HUDPresetPosition.h"
 #import "HUDRootViewController.h"
 #import "HUDBackdropLabel.h"
-#if __has_include("BinanceHUD-Swift.h")
+#if __has_include("BinanceMonitor-Swift.h")
+#import "BinanceMonitor-Swift.h"
+#elif __has_include("BinanceHUD-Swift.h")
 #import "BinanceHUD-Swift.h"
 #elif __has_include("TrollSpeed-Swift.h")
 #import "TrollSpeed-Swift.h"
@@ -65,7 +67,7 @@ static void LaunchServicesApplicationStateChanged
 
     for (LSApplicationProxy *app in [[objc_getClass("LSApplicationWorkspace") defaultWorkspace] allApplications])
     {
-        if ([app.applicationIdentifier isEqualToString:@"com.inighty.binancehud"])
+        if ([app.applicationIdentifier isEqualToString:@"com.inighty.binancemonitor"] || [app.applicationIdentifier isEqualToString:@"com.inighty.binancehud"])
         {
             isAppInstalled = YES;
             break;
@@ -358,14 +360,14 @@ static const CACornerMask kCornerMaskAll = kCALayerMinXMinYCorner | kCALayerMaxX
     [self saveUserDefaults];
 }
 
-#define PREFS_PATH "/var/mobile/Library/Preferences/com.inighty.binancehud.prefs.plist"
+#define PREFS_PATH "/var/mobile/Library/Preferences/com.inighty.binancemonitor.prefs.plist"
 
 - (NSDictionary *)extraUserDefaultsDictionary {
     static BOOL isJailbroken = NO;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
       isJailbroken = [[NSFileManager defaultManager]
-          fileExistsAtPath:JBROOT_PATH_NSSTRING(@"/Library/PreferenceBundles/BinanceHUDPrefs.bundle")];
+          fileExistsAtPath:JBROOT_PATH_NSSTRING(@"/Library/PreferenceBundles/BinanceMonitorPrefs.bundle")];
     });
     if (!isJailbroken) {
         return nil;

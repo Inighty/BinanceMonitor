@@ -7,7 +7,9 @@
 
 #import <UIKit/UIKit.h>
 
-#if __has_include("BinanceHUD-Swift.h")
+#if __has_include("BinanceMonitor-Swift.h")
+#import "BinanceMonitor-Swift.h"
+#elif __has_include("BinanceHUD-Swift.h")
 #import "BinanceHUD-Swift.h"
 #elif __has_include("TrollSpeed-Swift.h")
 #import "TrollSpeed-Swift.h"

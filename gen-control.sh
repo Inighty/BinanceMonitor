@@ -15,5 +15,5 @@ defaults write $PWD/Resources/Info.plist CFBundleVersion $RAND_BUILD_STR
 plutil -convert xml1 $PWD/Resources/Info.plist
 chmod 0644 $PWD/Resources/Info.plist
 
-XCODE_PROJ_PBXPROJ=$PWD/TrollSpeed.xcodeproj/project.pbxproj
-sed -i '' "s/MARKETING_VERSION = .*;/MARKETING_VERSION = $VERSION;/g" $XCODE_PROJ_PBXPROJ
+XCODE_PROJ_PBXPROJ=$PWD/BinanceMonitor.xcodeproj/project.pbxproj
+sed -i '' "s/MARKETING_VERSION = .*;/MARKETING_VERSION = $VERSION;/g" $XCODE_PROJ_PBXPROJ 2>/dev/null || sed -i "s/MARKETING_VERSION = .*;/MARKETING_VERSION = $VERSION;/g" $XCODE_PROJ_PBXPROJ

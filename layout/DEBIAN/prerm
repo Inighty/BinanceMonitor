@@ -1,11 +1,11 @@
 #!/bin/sh
 
-if [ -f /Library/LaunchDaemons/com.inighty.binancehud.hudservices.plist ]; then
-    launchctl unload /Library/LaunchDaemons/com.inighty.binancehud.hudservices.plist || true
+if [ -f /Library/LaunchDaemons/com.inighty.binancemonitor.hudservices.plist ]; then
+    launchctl unload /Library/LaunchDaemons/com.inighty.binancemonitor.hudservices.plist || true
 fi
 
-if [ -f /var/jb/Library/LaunchDaemons/com.inighty.binancehud.hudservices.plist ]; then
-    launchctl unload /var/jb/Library/LaunchDaemons/com.inighty.binancehud.hudservices.plist || true
+if [ -f /var/jb/Library/LaunchDaemons/com.inighty.binancemonitor.hudservices.plist ]; then
+    launchctl unload /var/jb/Library/LaunchDaemons/com.inighty.binancemonitor.hudservices.plist || true
 fi
 
 exit 0

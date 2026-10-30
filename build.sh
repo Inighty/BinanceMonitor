@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# This script is used to build the TrollSpeed app and create a tipa file with Xcode.
+# This script is used to build the BinanceMonitor app and create a tipa file with Xcode.
 
 # Read the version from the existing control file
 VERSION=$(./get-version.sh) || exit 1
@@ -20,26 +20,26 @@ fi
 
 # Build using Xcode
 xcodebuild clean build archive \
--scheme TrollSpeed \
--project TrollSpeed.xcodeproj \
+-scheme BinanceMonitor \
+-project BinanceMonitor.xcodeproj \
 -configuration Release \
 -sdk iphoneos \
 -destination 'generic/platform=iOS' \
--archivePath TrollSpeed \
+-archivePath BinanceMonitor \
 CODE_SIGNING_ALLOWED=NO \
 IPHONEOS_DEPLOYMENT_TARGET=16.0 \
 THEOS="$THEOS" | xcpretty
 
 chmod 0644 Resources/Info.plist
-cp supports/entitlements.plist TrollSpeed.xcarchive/Products
-cd TrollSpeed.xcarchive/Products/Applications || exit
-codesign --remove-signature BinanceHUD.app
+cp supports/entitlements.plist BinanceMonitor.xcarchive/Products
+cd BinanceMonitor.xcarchive/Products/Applications || exit
+codesign --remove-signature BinanceMonitor.app
 cd - || exit
-cd TrollSpeed.xcarchive/Products || exit
+cd BinanceMonitor.xcarchive/Products || exit
 mv Applications Payload
-ldid -Sentitlements.plist Payload/BinanceHUD.app
-chmod 0644 Payload/BinanceHUD.app/Info.plist
-zip -qr BinanceHUD.tipa Payload
+ldid -Sentitlements.plist Payload/BinanceMonitor.app
+chmod 0644 Payload/BinanceMonitor.app/Info.plist
+zip -qr BinanceMonitor.tipa Payload
 cd - || exit
 mkdir -p packages
-mv TrollSpeed.xcarchive/Products/BinanceHUD.tipa packages/BinanceHUD+AppIntents16_$VERSION.tipa
+mv BinanceMonitor.xcarchive/Products/BinanceMonitor.tipa packages/BinanceMonitor+AppIntents16_$VERSION.tipa

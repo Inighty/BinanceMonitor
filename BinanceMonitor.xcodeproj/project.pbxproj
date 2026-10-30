@@ -116,8 +116,8 @@
 		CC654E072DABD95200D54F83 /* BackBoardServices.Sim.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; path = BackBoardServices.Sim.tbd; sourceTree = "<group>"; };
 		CC654E092DABD95800D54F83 /* GraphicsServices.Sim.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; path = GraphicsServices.Sim.tbd; sourceTree = "<group>"; };
 		CC654E0B2DABD95E00D54F83 /* SpringBoardServices.Sim.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; path = SpringBoardServices.Sim.tbd; sourceTree = "<group>"; };
-		CC654E452DABD9C200D54F83 /* BinanceHUD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BinanceHUD.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		CC711D012B5BF550007235A6 /* BinanceHUD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BinanceHUD.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC654E452DABD9C200D54F83 /* BinanceMonitor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BinanceMonitor.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC711D012B5BF550007235A6 /* BinanceMonitor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BinanceMonitor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC711D102B5BF551007235A6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CC711D1E2B5BF5C6007235A6 /* HUDHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HUDHelper.mm; sourceTree = "<group>"; };
 		CC711D1F2B5BF5C6007235A6 /* RootViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RootViewController.mm; sourceTree = "<group>"; };
@@ -265,8 +265,8 @@
 		CC711D022B5BF550007235A6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CC711D012B5BF550007235A6 /* BinanceHUD.app */,
-				CC654E452DABD9C200D54F83 /* BinanceHUD.app */,
+				CC711D012B5BF550007235A6 /* BinanceMonitor.app */,
+				CC654E452DABD9C200D54F83 /* BinanceMonitor.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -441,9 +441,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CC654E0D2DABD9C200D54F83 /* TrollSpeed.Sim */ = {
+		CC654E0D2DABD9C200D54F83 /* BinanceMonitor.Sim */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CC654E422DABD9C200D54F83 /* Build configuration list for PBXNativeTarget "TrollSpeed.Sim" */;
+			buildConfigurationList = CC654E422DABD9C200D54F83 /* Build configuration list for PBXNativeTarget "BinanceMonitor.Sim" */;
 			buildPhases = (
 				CC654E0E2DABD9C200D54F83 /* Sources */,
 				CC654E302DABD9C200D54F83 /* Frameworks */,
@@ -453,14 +453,14 @@
 			);
 			dependencies = (
 			);
-			name = TrollSpeed.Sim;
-			productName = TrollSpeed;
-			productReference = CC654E452DABD9C200D54F83 /* BinanceHUD.app */;
+			name = BinanceMonitor.Sim;
+			productName = BinanceMonitor;
+			productReference = CC654E452DABD9C200D54F83 /* BinanceMonitor.app */;
 			productType = "com.apple.product-type.application";
 		};
-		CC711D002B5BF550007235A6 /* TrollSpeed */ = {
+		CC711D002B5BF550007235A6 /* BinanceMonitor */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CC711D1A2B5BF551007235A6 /* Build configuration list for PBXNativeTarget "TrollSpeed" */;
+			buildConfigurationList = CC711D1A2B5BF551007235A6 /* Build configuration list for PBXNativeTarget "BinanceMonitor" */;
 			buildPhases = (
 				CC711CFD2B5BF550007235A6 /* Sources */,
 				CC711CFE2B5BF550007235A6 /* Frameworks */,
@@ -470,9 +470,9 @@
 			);
 			dependencies = (
 			);
-			name = TrollSpeed;
-			productName = TrollSpeed;
-			productReference = CC711D012B5BF550007235A6 /* BinanceHUD.app */;
+			name = BinanceMonitor;
+			productName = BinanceMonitor;
+			productReference = CC711D012B5BF550007235A6 /* BinanceMonitor.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -489,7 +489,7 @@
 					};
 				};
 			};
-			buildConfigurationList = CC711CFC2B5BF550007235A6 /* Build configuration list for PBXProject "TrollSpeed" */;
+			buildConfigurationList = CC711CFC2B5BF550007235A6 /* Build configuration list for PBXProject "BinanceMonitor" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -504,8 +504,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CC711D002B5BF550007235A6 /* TrollSpeed */,
-				CC654E0D2DABD9C200D54F83 /* TrollSpeed.Sim */,
+				CC711D002B5BF550007235A6 /* BinanceMonitor */,
+				CC654E0D2DABD9C200D54F83 /* BinanceMonitor.Sim */,
 			);
 		};
 /* End PBXProject section */
@@ -667,7 +667,7 @@
 					"THEOS_PACKAGE_INSTALL_PREFIX=\\\"\\\"",
 				);
 				INFOPLIST_FILE = Resources/Info.plist;
-					INFOPLIST_KEY_CFBundleDisplayName = BinanceHUD;
+					INFOPLIST_KEY_CFBundleDisplayName = BinanceMonitor;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -681,8 +681,8 @@
 					"$(PROJECT_DIR)/libraries",
 				);
 				MARKETING_VERSION = 2.0;
-					PRODUCT_BUNDLE_IDENTIFIER = com.inighty.binancehud;
-					PRODUCT_NAME = BinanceHUD;
+					PRODUCT_BUNDLE_IDENTIFIER = com.inighty.binancemonitor;
+					PRODUCT_NAME = BinanceMonitor;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = iphonesimulator;
 				SUPPORTS_MACCATALYST = NO;
@@ -712,7 +712,7 @@
 					"THEOS_PACKAGE_INSTALL_PREFIX=\\\"\\\"",
 				);
 				INFOPLIST_FILE = Resources/Info.plist;
-					INFOPLIST_KEY_CFBundleDisplayName = BinanceHUD;
+					INFOPLIST_KEY_CFBundleDisplayName = BinanceMonitor;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -726,8 +726,8 @@
 					"$(PROJECT_DIR)/libraries",
 				);
 				MARKETING_VERSION = 2.0;
-					PRODUCT_BUNDLE_IDENTIFIER = com.inighty.binancehud;
-					PRODUCT_NAME = BinanceHUD;
+					PRODUCT_BUNDLE_IDENTIFIER = com.inighty.binancemonitor;
+					PRODUCT_NAME = BinanceMonitor;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = iphonesimulator;
 				SUPPORTS_MACCATALYST = NO;
@@ -801,7 +801,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_MODULE_NAME = TrollSpeed;
+				PRODUCT_MODULE_NAME = BinanceMonitor;
 				SDKROOT = iphoneos;
 				THEOS = $HOME/theos;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -862,7 +862,7 @@
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_MODULE_NAME = TrollSpeed;
+				PRODUCT_MODULE_NAME = BinanceMonitor;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				THEOS = $HOME/theos;
@@ -892,7 +892,7 @@
 					"THEOS_PACKAGE_INSTALL_PREFIX=\\\"\\\"",
 				);
 				INFOPLIST_FILE = Resources/Info.plist;
-					INFOPLIST_KEY_CFBundleDisplayName = BinanceHUD;
+					INFOPLIST_KEY_CFBundleDisplayName = BinanceMonitor;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -906,8 +906,8 @@
 					"$(PROJECT_DIR)/libraries",
 				);
 				MARKETING_VERSION = 2.0;
-					PRODUCT_BUNDLE_IDENTIFIER = com.inighty.binancehud;
-					PRODUCT_NAME = BinanceHUD;
+					PRODUCT_BUNDLE_IDENTIFIER = com.inighty.binancemonitor;
+					PRODUCT_NAME = BinanceMonitor;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
@@ -941,7 +941,7 @@
 					"THEOS_PACKAGE_INSTALL_PREFIX=\\\"\\\"",
 				);
 				INFOPLIST_FILE = Resources/Info.plist;
-					INFOPLIST_KEY_CFBundleDisplayName = BinanceHUD;
+					INFOPLIST_KEY_CFBundleDisplayName = BinanceMonitor;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -955,8 +955,8 @@
 					"$(PROJECT_DIR)/libraries",
 				);
 				MARKETING_VERSION = 2.0;
-					PRODUCT_BUNDLE_IDENTIFIER = com.inighty.binancehud;
-					PRODUCT_NAME = BinanceHUD;
+					PRODUCT_BUNDLE_IDENTIFIER = com.inighty.binancemonitor;
+					PRODUCT_NAME = BinanceMonitor;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
@@ -972,7 +972,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CC654E422DABD9C200D54F83 /* Build configuration list for PBXNativeTarget "TrollSpeed.Sim" */ = {
+		CC654E422DABD9C200D54F83 /* Build configuration list for PBXNativeTarget "BinanceMonitor.Sim" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CC654E432DABD9C200D54F83 /* Debug */,
@@ -981,7 +981,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CC711CFC2B5BF550007235A6 /* Build configuration list for PBXProject "TrollSpeed" */ = {
+		CC711CFC2B5BF550007235A6 /* Build configuration list for PBXProject "BinanceMonitor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CC711D182B5BF551007235A6 /* Debug */,
@@ -990,7 +990,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CC711D1A2B5BF551007235A6 /* Build configuration list for PBXNativeTarget "TrollSpeed" */ = {
+		CC711D1A2B5BF551007235A6 /* Build configuration list for PBXNativeTarget "BinanceMonitor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CC711D1B2B5BF551007235A6 /* Debug */,

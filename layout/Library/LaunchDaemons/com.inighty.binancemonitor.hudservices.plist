@@ -18,14 +18,14 @@
 	<key>KeepAlive</key>
 	<true/>
 	<key>Label</key>
-	<string>com.inighty.binancehud.hudservices</string>
+	<string>com.inighty.binancemonitor.hudservices</string>
 	<key>POSIXSpawnType</key>
 	<string>App</string>
 	<key>ProcessType</key>
 	<string>Interactive</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/Applications/BinanceHUD.app/BinanceHUD</string>
+		<string>/Applications/BinanceMonitor.app/BinanceMonitor</string>
 		<string>-hud</string>
 	</array>
 	<key>RunAtLoad</key>

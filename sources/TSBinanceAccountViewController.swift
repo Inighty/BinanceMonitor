@@ -499,7 +499,7 @@ final class TSBinanceAccountViewController: UIViewController, UIGestureRecognize
     private func presentPasteAccessError() {
         let diagnostics = pasteboardDiagnosticSummary()
         let message = [
-            NSLocalizedString("Unable to paste. In iOS Settings, open BinanceHUD and set Paste from Other Apps to Ask or Allow.", comment: "TSBinanceAccountViewController"),
+            NSLocalizedString("Unable to paste. In iOS Settings, open BinanceMonitor and set Paste from Other Apps to Ask or Allow.", comment: "TSBinanceAccountViewController"),
             diagnostics
         ].joined(separator: "\n\n")
 

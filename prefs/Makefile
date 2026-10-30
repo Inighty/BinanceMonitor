@@ -4,20 +4,20 @@ INSTALL_TARGET_PROCESSES := Preferences
 
 include $(THEOS)/makefiles/common.mk
 
-BUNDLE_NAME += BinanceHUDPrefs
+BUNDLE_NAME += BinanceMonitorPrefs
 
-BinanceHUDPrefs_FILES += TSPrefsRootListController.m
+BinanceMonitorPrefs_FILES += TSPrefsRootListController.m
 
 ifeq ($(THEOS_PACKAGE_SCHEME),roothide)
-BinanceHUDPrefs_FILES += ../libroot/dyn.c
-BinanceHUDPrefs_LIBRARIES += roothide
+BinanceMonitorPrefs_FILES += ../libroot/dyn.c
+BinanceMonitorPrefs_LIBRARIES += roothide
 endif
 
-BinanceHUDPrefs_CFLAGS += -fobjc-arc
-BinanceHUDPrefs_CFLAGS += -I../supports/
+BinanceMonitorPrefs_CFLAGS += -fobjc-arc
+BinanceMonitorPrefs_CFLAGS += -I../supports/
 
-BinanceHUDPrefs_FRAMEWORKS += UIKit
-BinanceHUDPrefs_PRIVATE_FRAMEWORKS += Preferences
-BinanceHUDPrefs_INSTALL_PATH += /Library/PreferenceBundles
+BinanceMonitorPrefs_FRAMEWORKS += UIKit
+BinanceMonitorPrefs_PRIVATE_FRAMEWORKS += Preferences
+BinanceMonitorPrefs_INSTALL_PATH += /Library/PreferenceBundles
 
 include $(THEOS_MAKE_PATH)/bundle.mk
