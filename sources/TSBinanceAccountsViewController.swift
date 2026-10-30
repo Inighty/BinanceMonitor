@@ -5,8 +5,8 @@ import UIKit
 }
 
 @objcMembers
-public final class TSBinanceAccountsViewController: UITableViewController, TSBinanceAccountViewControllerDelegate {
-    public weak var delegate: TSBinanceAccountsViewControllerDelegate?
+public final class TSBinanceAccountsViewController: UITableViewController {
+    weak var delegate: TSBinanceAccountsViewControllerDelegate?
 
     private let store = TSBinanceCredentialStore.sharedStore()
     private static let cellIdentifier = "TSBinanceAccountCell"
@@ -257,9 +257,12 @@ public final class TSBinanceAccountsViewController: UITableViewController, TSBin
         present(alert, animated: true)
     }
 
-    // MARK: - TSBinanceAccountViewControllerDelegate
+}
 
-    public func binanceAccountViewControllerDidUpdateCredentials(_ controller: TSBinanceAccountViewController) {
+// MARK: - TSBinanceAccountViewControllerDelegate
+
+extension TSBinanceAccountsViewController: TSBinanceAccountViewControllerDelegate {
+    func binanceAccountViewControllerDidUpdateCredentials(_ controller: TSBinanceAccountViewController) {
         reloadAccountsData()
         delegate?.binanceAccountsViewControllerDidUpdate(self)
     }
