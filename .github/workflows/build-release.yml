@@ -7,6 +7,9 @@ on:
       - "v*.*"
       - "v*.*.*"
 
+permissions:
+  contents: write
+
 env:
   THEOS: ''
   PKG_VERSION: ''
@@ -86,12 +89,12 @@ jobs:
       - name: Upload symbols
         uses: actions/upload-artifact@v4
         with:
-          name: BinanceMonitor_${{ env.PKG_VERSION }}_symbols
+          name: BinanceMonitor_${{ env.PKG_VERSION }}symbols
           path: |
             BinanceMonitor/packages/BinanceMonitor_${{ env.PKG_VERSION }}_symbols.zip
 
       - name: Upload release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.PKG_VERSION }}
           body_path: BinanceMonitor/CHANGELOG.md
