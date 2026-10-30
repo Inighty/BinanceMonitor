@@ -1,4 +1,6 @@
 #!/bin/sh
+set -e
+set -o pipefail
 
 # This script is used to build the BinanceMonitor app and create a tipa file with Xcode.
 
