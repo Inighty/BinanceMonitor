@@ -96,3 +96,19 @@
 "Utility" = "Utilidad";
 "You can quit this app now.\nThe HUD will persist on your screen." = "Ahora puedes salir de la app.\nEl HUD seguirá mostrándose en tu pantalla.";
 "more" = "más";
+
+"Binance Accounts" = "Cuentas de Binance";
+"Configured Accounts" = "Cuentas configuradas";
+"Tap an account to switch. Swipe to edit or delete." = "Toca una cuenta para cambiar. Desliza para editar o eliminar.";
+"No accounts added yet" = "Aún no se han añadido cuentas";
+"Tap '+' or Add Account below" = "Toca '+' o Añadir cuenta abajo";
+"Add Account..." = "Añadir cuenta...";
+"Add Account" = "Añadir cuenta";
+"Edit Account" = "Editar cuenta";
+"Account Name" = "Nombre de la cuenta";
+"Account Name (e.g. Main)" = "Nombre de la cuenta (ej. Principal)";
+"Account not found." = "Cuenta no encontrada.";
+"Delete Account" = "Eliminar cuenta";
+"Are you sure you want to delete '%@'?" = "¿Estás seguro de que deseas eliminar '%@'?";
+"Use Testnet" = "Usar Testnet";
+"Account %d" = "Cuenta %d";

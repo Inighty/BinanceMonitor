@@ -236,6 +236,12 @@ final class TSBinancePositionService: NSObject {
 
         workQueue.sync {
             lines.append("Binance position diagnostics:")
+            let store = TSBinanceCredentialStore.sharedStore()
+            if let active = store.activeAccount() {
+                lines.append("activeAccount: \(active.name) [\(active.maskedAPIKey)] (\(store.allAccounts().count) total)")
+            } else {
+                lines.append("activeAccount: <none>")
+            }
             if let config = currentConfig {
                 lines.append("environment: \(config.environment.rawValue)")
             } else {
@@ -537,19 +543,16 @@ final class TSBinancePositionService: NSObject {
 
     private func loadConfig() -> TSBinanceConfigLoadState {
         let credentialStore = TSBinanceCredentialStore.sharedStore()
-        switch credentialStore.credentialState() {
-        case .configured(let apiKey, let secret):
-            let useTestnet = GetStandardUserDefaults().bool(forKey: HUDUserDefaultsKeyBinanceUseTestnet)
-            let environment: TSBinanceEnvironment = useTestnet ? .testnet : .mainnet
-            return .configured(TSBinanceConfig(apiKey: apiKey, secret: secret, environment: environment))
-        case .missing:
+        guard let active = credentialStore.activeAccount() else {
             return .missing
-        case .temporarilyUnavailable(let error), .failed(let error):
-            return .unavailable(
-                message: NSLocalizedString("Binance credentials temporarily unavailable", comment: "TSBinancePositionService"),
-                detail: error.localizedDescription
-            )
         }
+        let trimmedAPIKey = active.apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedSecret = active.secret.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedAPIKey.isEmpty, !trimmedSecret.isEmpty else {
+            return .missing
+        }
+        let environment: TSBinanceEnvironment = active.useTestnet ? .testnet : .mainnet
+        return .configured(TSBinanceConfig(apiKey: trimmedAPIKey, secret: trimmedSecret, environment: environment))
     }
 
     private func updateState(snapshot: TSBinanceSnapshotState, error: String?, entries: [TSBinanceDisplayEntry]?) {

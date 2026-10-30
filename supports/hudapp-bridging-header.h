@@ -26,6 +26,7 @@ static HUDUserDefaultsKey const HUDUserDefaultsKeyKeepInPlace = @"keepInPlace";
 static HUDUserDefaultsKey const HUDUserDefaultsKeyHideAtSnapshot = @"hideAtSnapshot";
 static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceUseTestnet = @"binanceUseTestnet";
 static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceAccount = @"binanceAccount";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceActiveAccountId = @"binanceActiveAccountId";
 static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceShowSymbol = @"binanceShowSymbol";
 static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceShowSide = @"binanceShowSide";
 static HUDUserDefaultsKey const HUDUserDefaultsKeyBinanceShowQuantity = @"binanceShowQuantity";

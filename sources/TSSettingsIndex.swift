@@ -140,7 +140,14 @@ enum TSSettingsIndex: Int, CaseIterable {
     func subtitle(highlighted: Bool, restartRequired: Bool) -> String {
         switch self {
         case .binanceAccount:
-            return highlighted ? NSLocalizedString("Configured", comment: "TSSettingsIndex") : NSLocalizedString("Not Configured", comment: "TSSettingsIndex")
+            if let active = TSBinanceCredentialStore.sharedStore().activeAccount() {
+                let count = TSBinanceCredentialStore.sharedStore().allAccounts().count
+                if count > 1 {
+                    return "\(active.name) (\(count))"
+                }
+                return active.name
+            }
+            return NSLocalizedString("Not Configured", comment: "TSSettingsIndex")
         case .binanceUseTestnet:
             return highlighted ? NSLocalizedString("Testnet", comment: "TSSettingsIndex") : NSLocalizedString("Mainnet", comment: "TSSettingsIndex")
         case .binanceRefreshInterval:

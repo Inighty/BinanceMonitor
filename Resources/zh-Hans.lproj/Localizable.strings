@@ -96,3 +96,19 @@
 "Utility" = "工具";
 "You can quit this app now.\nThe HUD will persist on your screen." = "现在可以退出应用了。\n悬浮窗会继续显示在屏幕上。";
 "more" = "更多";
+
+"Binance Accounts" = "币安账户管理";
+"Configured Accounts" = "已配置账户";
+"Tap an account to switch. Swipe to edit or delete." = "轻点账户即可切换使用。左滑可编辑或删除。";
+"No accounts added yet" = "尚未添加任何账户";
+"Tap '+' or Add Account below" = "点击右上角“+”或下方按钮添加";
+"Add Account..." = "添加账户...";
+"Add Account" = "添加账户";
+"Edit Account" = "编辑账户";
+"Account Name" = "账户备注名称";
+"Account Name (e.g. Main)" = "账户备注名称（如：主账户）";
+"Account not found." = "未找到指定账户。";
+"Delete Account" = "删除账户";
+"Are you sure you want to delete '%@'?" = "确定要删除账户“%@”吗？";
+"Use Testnet" = "使用测试网环境";
+"Account %d" = "账户 %d";

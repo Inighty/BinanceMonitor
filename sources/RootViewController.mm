@@ -688,10 +688,10 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
 
 - (void)presentBinanceAccountEditor
 {
-    TSBinanceAccountViewController *editorViewController = [[TSBinanceAccountViewController alloc] init];
-    editorViewController.delegate = self;
+    TSBinanceAccountsViewController *accountsViewController = [[TSBinanceAccountsViewController alloc] init];
+    accountsViewController.delegate = self;
 
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:editorViewController];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:accountsViewController];
     if (@available(iOS 15.0, *)) {
         UISheetPresentationController *sheetController = navigationController.sheetPresentationController;
         if (sheetController) {
@@ -702,6 +702,11 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
     }
     navigationController.modalPresentationStyle = UIModalPresentationPageSheet;
     [self presentViewController:navigationController animated:YES completion:nil];
+}
+
+- (void)binanceAccountsViewControllerDidUpdate:(TSBinanceAccountsViewController * _Nonnull)controller
+{
+    [self binanceAccountViewControllerDidUpdateCredentials:(id)controller];
 }
 
 - (void)presentSettingsError:(NSError *)error

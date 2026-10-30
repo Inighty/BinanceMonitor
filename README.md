@@ -13,6 +13,7 @@ The original network speed display from TrollSpeed has been replaced with real-t
 ## Features
 
 - **Binance USD-M Futures HUD**: Displays real-time contract position metrics in a persistent floating overlay.
+- **Multi-Account Support**: Add and manage multiple Binance accounts (API Key/Secret pairs), with custom account names, individual testnet/mainnet settings, and seamless one-tap switching.
 - **Secure Keychain Storage**: Read-only API Key and Secret are safely stored in the iOS Keychain.
 - **Mainnet & Testnet Support**: Easily switch between Binance Mainnet (`fapi.binance.com`) and Testnet (`demo-fapi.binance.com`).
 - **Flexible Field Customization**: Toggle display of common metrics:

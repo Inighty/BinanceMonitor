@@ -96,3 +96,19 @@
 "Utility" = "Utility";
 "You can quit this app now.\nThe HUD will persist on your screen." = "You can quit this app now.\nThe HUD will persist on your screen.";
 "more" = "more";
+
+"Binance Accounts" = "Binance Accounts";
+"Configured Accounts" = "Configured Accounts";
+"Tap an account to switch. Swipe to edit or delete." = "Tap an account to switch. Swipe to edit or delete.";
+"No accounts added yet" = "No accounts added yet";
+"Tap '+' or Add Account below" = "Tap '+' or Add Account below";
+"Add Account..." = "Add Account...";
+"Add Account" = "Add Account";
+"Edit Account" = "Edit Account";
+"Account Name" = "Account Name";
+"Account Name (e.g. Main)" = "Account Name (e.g. Main)";
+"Account not found." = "Account not found.";
+"Delete Account" = "Delete Account";
+"Are you sure you want to delete '%@'?" = "Are you sure you want to delete '%@'?";
+"Use Testnet" = "Use Testnet";
+"Account %d" = "Account %d";
