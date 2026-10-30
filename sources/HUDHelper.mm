@@ -41,7 +41,11 @@ BOOL IsHUDEnabled(void)
     const char *args[] = { executablePath, "-check", NULL };
     rc = posix_spawn(&task_pid, executablePath, NULL, &attr, (char **)args, environ);
     if (rc != 0) {
-        log_debug(OS_LOG_DEFAULT, "posix_spawn error %s", strerror(rc));
+        log_debug(OS_LOG_DEFAULT, "posix_spawn error %s, retrying without persona", strerror(rc));
+        posix_spawnattr_t fallbackAttr;
+        posix_spawnattr_init(&fallbackAttr);
+        rc = posix_spawn(&task_pid, executablePath, NULL, &fallbackAttr, (char **)args, environ);
+        posix_spawnattr_destroy(&fallbackAttr);
     }
 
     posix_spawnattr_destroy(&attr);
@@ -128,7 +132,13 @@ void SetHUDEnabled(BOOL isEnabled)
         const char *args[] = { executablePath, "-hud", NULL };
         rc = posix_spawn(&task_pid, executablePath, NULL, &attr, (char **)args, environ);
         if (rc != 0) {
-            log_debug(OS_LOG_DEFAULT, "posix_spawn error %s", strerror(rc));
+            log_debug(OS_LOG_DEFAULT, "posix_spawn error %s, retrying without persona", strerror(rc));
+            posix_spawnattr_t fallbackAttr;
+            posix_spawnattr_init(&fallbackAttr);
+            posix_spawnattr_setpgroup(&fallbackAttr, 0);
+            posix_spawnattr_setflags(&fallbackAttr, POSIX_SPAWN_SETPGROUP);
+            rc = posix_spawn(&task_pid, executablePath, NULL, &fallbackAttr, (char **)args, environ);
+            posix_spawnattr_destroy(&fallbackAttr);
         }
 
         posix_spawnattr_destroy(&attr);
@@ -151,7 +161,11 @@ void SetHUDEnabled(BOOL isEnabled)
         const char *args[] = { executablePath, "-exit", NULL };
         rc = posix_spawn(&task_pid, executablePath, NULL, &attr, (char **)args, environ);
         if (rc != 0) {
-            log_debug(OS_LOG_DEFAULT, "posix_spawn error %s", strerror(rc));
+            log_debug(OS_LOG_DEFAULT, "posix_spawn error %s, retrying without persona", strerror(rc));
+            posix_spawnattr_t fallbackAttr;
+            posix_spawnattr_init(&fallbackAttr);
+            rc = posix_spawn(&task_pid, executablePath, NULL, &fallbackAttr, (char **)args, environ);
+            posix_spawnattr_destroy(&fallbackAttr);
         }
 
         posix_spawnattr_destroy(&attr);
