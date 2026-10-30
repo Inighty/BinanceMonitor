@@ -9,8 +9,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#ifndef NOTIFY_RELOAD_HUD
+#define NOTIFY_RELOAD_HUD "com.inighty.binancemonitor.notification.hud.reload"
+#endif
+
+OBJC_EXTERN const char * const kHUDNotificationReload;
 OBJC_EXTERN BOOL IsHUDEnabled(void);
 OBJC_EXTERN void SetHUDEnabled(BOOL isEnabled);
+OBJC_EXTERN void PostHUDNotification(const char *name);
 
 #if DEBUG
 OBJC_EXTERN void SimulateMemoryPressure(void);

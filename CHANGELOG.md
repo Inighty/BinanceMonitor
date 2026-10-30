@@ -1,3 +1,12 @@
+# BinanceMonitor 2.0-15
+
+## Improvements & Bug Fixes
+
+- **Live Cross-Process Account Switching**: Switching active Binance accounts in the app now immediately refreshes the floating HUD window without needing to restart the HUD.
+- **Cross-Process State Synchronization**: Synced active account ID across `securityd` Keychain, shared preferences plist (`/var/mobile/Library/Preferences/com.inighty.binancemonitor.plist`), and `NSUserDefaults`.
+- **Dual Notification Delivery**: Integrated both Darwin notification broadcast (`notify_post`) and Darwin notification center (`CFNotificationCenterPostNotification`) to ensure the background HUD process receives reload events instantly.
+- **HUD Instant State Transition**: HUD resets position and entry cache upon reload and seamlessly fetches and displays data for the newly selected account.
+
 # BinanceMonitor 2.0-14
 
 ## Bug Fixes & Stability Improvements

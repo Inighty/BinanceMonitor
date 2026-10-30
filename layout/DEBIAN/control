@@ -1,6 +1,6 @@
 Package: com.inighty.binancemonitor.jb
 Name: BinanceMonitor JB
-Version: 2.0-14
+Version: 2.0-15
 Section: Tweaks
 Depends: firmware (>= 14.0)
 Architecture: iphoneos-arm

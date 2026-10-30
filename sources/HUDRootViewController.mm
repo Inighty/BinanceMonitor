@@ -119,6 +119,19 @@ static void SpringBoardLockStatusChanged
     }
 }
 
+static void HUDDarwinNotificationReloadReceived
+(CFNotificationCenterRef center,
+ void *observer,
+ CFStringRef name,
+ const void *object,
+ CFDictionaryRef userInfo)
+{
+    HUDRootViewController *rootViewController = (__bridge HUDRootViewController *)observer;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [rootViewController reloadUserDefaults];
+    });
+}
+
 #define IDLE_INTERVAL 3.0
 
 static const double HUD_MIN_FONT_SIZE = 9.0;
@@ -178,6 +191,15 @@ static const CACornerMask kCornerMaskAll = kCALayerMinXMinYCorner | kCALayerMaxX
         (__bridge const void *)self,
         SpringBoardLockStatusChanged,
         CFSTR(NOTIFY_UI_LOCKSTATE),
+        NULL,
+        CFNotificationSuspensionBehaviorCoalesce
+    );
+
+    CFNotificationCenterAddObserver(
+        darwinCenter,
+        (__bridge const void *)self,
+        HUDDarwinNotificationReloadReceived,
+        CFSTR(NOTIFY_RELOAD_HUD),
         NULL,
         CFNotificationSuspensionBehaviorCoalesce
     );
@@ -261,6 +283,7 @@ static const CACornerMask kCornerMaskAll = kCALayerMinXMinYCorner | kCALayerMaxX
     }
 
     [[TSBinancePositionService sharedService] reloadConfiguration];
+    [self refreshHUDContent];
 
     [self removeAllAnimations];
     [self resetGestureRecognizers];

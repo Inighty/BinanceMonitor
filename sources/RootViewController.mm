@@ -393,7 +393,7 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
 - (void)saveUserDefaults
 {
     [_userDefaults writeToFile:(JBROOT_PATH_NSSTRING(USER_DEFAULTS_PATH)) atomically:YES];
-    notify_post(NOTIFY_RELOAD_HUD);
+    PostHUDNotification(NOTIFY_RELOAD_HUD);
 }
 
 - (BOOL)isLandscapeOrientation
@@ -650,7 +650,7 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
         BOOL enabled = [GetStandardUserDefaults() boolForKey:HUDUserDefaultsKeyBinanceUseTestnet];
         [GetStandardUserDefaults() setBool:!enabled forKey:HUDUserDefaultsKeyBinanceUseTestnet];
         [GetStandardUserDefaults() synchronize];
-        notify_post(NOTIFY_RELOAD_HUD);
+        PostHUDNotification(NOTIFY_RELOAD_HUD);
         return;
     }
 
@@ -664,7 +664,7 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
         NSString *next = [current isEqualToString:@"summary"] ? @"positions" : @"summary";
         [GetStandardUserDefaults() setObject:next forKey:HUDUserDefaultsKeyBinanceDisplayMode];
         [GetStandardUserDefaults() synchronize];
-        notify_post(NOTIFY_RELOAD_HUD);
+        PostHUDNotification(NOTIFY_RELOAD_HUD);
         return;
     }
 
@@ -677,7 +677,7 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
         BOOL enabled = [GetStandardUserDefaults() boolForKey:key];
         [GetStandardUserDefaults() setBool:!enabled forKey:key];
         [GetStandardUserDefaults() synchronize];
-        notify_post(NOTIFY_RELOAD_HUD);
+        PostHUDNotification(NOTIFY_RELOAD_HUD);
         return;
     }
 
@@ -754,7 +754,7 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
         UIAlertAction *action = [UIAlertAction actionWithTitle:title style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull selectedAction) {
             [GetStandardUserDefaults() setInteger:option.integerValue forKey:HUDUserDefaultsKeyBinanceRefreshInterval];
             [GetStandardUserDefaults() synchronize];
-            notify_post(NOTIFY_RELOAD_HUD);
+            PostHUDNotification(NOTIFY_RELOAD_HUD);
         }];
         [picker addAction:action];
     }
@@ -798,7 +798,7 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
     UIAlertAction *allAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"All", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [GetStandardUserDefaults() setObject:@"" forKey:HUDUserDefaultsKeyBinanceFocusSymbol];
         [GetStandardUserDefaults() synchronize];
-        notify_post(NOTIFY_RELOAD_HUD);
+        PostHUDNotification(NOTIFY_RELOAD_HUD);
     }];
     [picker addAction:allAction];
 
@@ -810,7 +810,7 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
         UIAlertAction *action = [UIAlertAction actionWithTitle:title style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull selectedAction) {
             [GetStandardUserDefaults() setObject:rawSymbol forKey:HUDUserDefaultsKeyBinanceFocusSymbol];
             [GetStandardUserDefaults() synchronize];
-            notify_post(NOTIFY_RELOAD_HUD);
+            PostHUDNotification(NOTIFY_RELOAD_HUD);
         }];
         [picker addAction:action];
     }
@@ -831,7 +831,7 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
 - (void)binanceAccountViewControllerDidUpdateCredentials:(TSBinanceAccountViewController * _Nonnull)controller
 {
     (void)controller;
-    notify_post(NOTIFY_RELOAD_HUD);
+    PostHUDNotification(NOTIFY_RELOAD_HUD);
 }
 
 - (void)reloadModeButtonState

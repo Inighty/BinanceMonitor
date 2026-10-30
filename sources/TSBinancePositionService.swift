@@ -222,6 +222,12 @@ final class TSBinancePositionService: NSObject {
 
     func reloadConfiguration() {
         workQueue.async {
+            TSBinanceCredentialStore.sharedStore().invalidateCache()
+            GetStandardUserDefaults().synchronize()
+            self.positionSnapshots = []
+            self.displayEntries = []
+            self.accountSummary = nil
+            self.updateState(snapshot: .loading, error: nil, entries: [])
             self.configureAndStartIfNeeded(forceRestart: true)
         }
     }
@@ -1214,6 +1220,7 @@ final class TSBinancePositionService: NSObject {
 
     private func loadDisplayOptions() -> TSBinanceDisplayOptions {
         let defaults = GetStandardUserDefaults()
+        defaults.synchronize()
         let refreshInterval = defaults.double(forKey: HUDUserDefaultsKeyBinanceRefreshInterval)
         let focusRaw = (defaults.string(forKey: HUDUserDefaultsKeyBinanceFocusSymbol) ?? "")
             .trimmingCharacters(in: .whitespacesAndNewlines)

@@ -48,9 +48,11 @@ public final class TSBinanceAccount: NSObject, Codable {
 public final class TSBinanceCredentialStore: NSObject {
     private static let service = "com.inighty.binancemonitor.binance"
     private static let accountsAccount = "accounts_json"
+    private static let activeAccountIdAccount = "active_account_id"
     private static let legacyApiKeyAccount = "apiKey"
     private static let legacySecretAccount = "secret"
     private static let accessibility = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+    private static let sharedPlistPath = "/var/mobile/Library/Preferences/com.inighty.binancemonitor.plist"
 
     private static let sharedInstance = TSBinanceCredentialStore()
 
@@ -61,8 +63,16 @@ public final class TSBinanceCredentialStore: NSObject {
         sharedInstance
     }
 
+    @objc public func invalidateCache() {
+        cachedAccounts = nil
+    }
+
     public func allAccounts() -> [TSBinanceAccount] {
-        if let cached = cachedAccounts {
+        allAccounts(forceReload: false)
+    }
+
+    public func allAccounts(forceReload: Bool = false) -> [TSBinanceAccount] {
+        if !forceReload, let cached = cachedAccounts {
             return cached
         }
 
@@ -71,12 +81,57 @@ public final class TSBinanceCredentialStore: NSObject {
         return loaded
     }
 
-    public func activeAccountId() -> String? {
-        let savedId = GetStandardUserDefaults().string(forKey: HUDUserDefaultsKeyBinanceActiveAccountId)?
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+    private func readActiveAccountIdFromSharedPlist() -> String? {
+        guard let dict = NSDictionary(contentsOfFile: Self.sharedPlistPath) else { return nil }
+        return dict[HUDUserDefaultsKeyBinanceActiveAccountId] as? String
+    }
 
+    private func saveActiveAccountIdToSharedPlist(id: String, useTestnet: Bool) {
+        let path = Self.sharedPlistPath
+        let dict = (NSMutableDictionary(contentsOfFile: path) ?? NSMutableDictionary())
+        dict[HUDUserDefaultsKeyBinanceActiveAccountId] = id
+        dict[HUDUserDefaultsKeyBinanceUseTestnet] = useTestnet
+        dict.write(toFile: path, atomically: true)
+        try? FileManager.default.setAttributes([
+            .ownerAccountID: 501,
+            .groupOwnerAccountID: 501,
+        ], ofItemAtPath: path)
+    }
+
+    private func removeActiveAccountIdFromSharedPlist() {
+        let path = Self.sharedPlistPath
+        guard let dict = NSMutableDictionary(contentsOfFile: path) else { return }
+        dict.removeObject(forKey: HUDUserDefaultsKeyBinanceActiveAccountId)
+        dict.write(toFile: path, atomically: true)
+        try? FileManager.default.setAttributes([
+            .ownerAccountID: 501,
+            .groupOwnerAccountID: 501,
+        ], ofItemAtPath: path)
+    }
+
+    public func activeAccountId() -> String? {
         let accounts = allAccounts()
-        if let savedId, !savedId.isEmpty, accounts.contains(where: { $0.id == savedId }) {
+        guard !accounts.isEmpty else { return nil }
+
+        // 1. Check authoritative system Keychain
+        if let keychainId = loadValue(forAccount: Self.activeAccountIdAccount)?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !keychainId.isEmpty,
+           accounts.contains(where: { $0.id == keychainId }) {
+            return keychainId
+        }
+
+        // 2. Check cross-process shared preferences file on disk
+        if let plistId = readActiveAccountIdFromSharedPlist()?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !plistId.isEmpty,
+           accounts.contains(where: { $0.id == plistId }) {
+            return plistId
+        }
+
+        // 3. Check standard user defaults
+        if let savedId = GetStandardUserDefaults().string(forKey: HUDUserDefaultsKeyBinanceActiveAccountId)?
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+           !savedId.isEmpty,
+           accounts.contains(where: { $0.id == savedId }) {
             return savedId
         }
 
@@ -90,15 +145,17 @@ public final class TSBinanceCredentialStore: NSObject {
 
     @discardableResult
     public func setActiveAccount(id: String) -> Bool {
-        let accounts = allAccounts()
-        guard accounts.contains(where: { $0.id == id }) else {
+        invalidateCache()
+        let accounts = allAccounts(forceReload: true)
+        guard let account = accounts.first(where: { $0.id == id }) else {
             return false
         }
 
+        try? saveValue(id, forAccount: Self.activeAccountIdAccount)
+        saveActiveAccountIdToSharedPlist(id: id, useTestnet: account.useTestnet)
+
         GetStandardUserDefaults().set(id, forKey: HUDUserDefaultsKeyBinanceActiveAccountId)
-        if let account = accounts.first(where: { $0.id == id }) {
-            GetStandardUserDefaults().set(account.useTestnet, forKey: HUDUserDefaultsKeyBinanceUseTestnet)
-        }
+        GetStandardUserDefaults().set(account.useTestnet, forKey: HUDUserDefaultsKeyBinanceUseTestnet)
         GetStandardUserDefaults().synchronize()
 
         notifyChange()
@@ -220,6 +277,7 @@ public final class TSBinanceCredentialStore: NSObject {
         if activeAccountId() == id {
             GetStandardUserDefaults().set(useTestnet, forKey: HUDUserDefaultsKeyBinanceUseTestnet)
             GetStandardUserDefaults().synchronize()
+            saveActiveAccountIdToSharedPlist(id: id, useTestnet: useTestnet)
         }
 
         notifyChange()
@@ -227,7 +285,8 @@ public final class TSBinanceCredentialStore: NSObject {
 
     @objc(deleteAccountWithId:error:)
     public func deleteAccount(id: String) throws {
-        var accounts = allAccounts()
+        invalidateCache()
+        var accounts = allAccounts(forceReload: true)
         guard let index = accounts.firstIndex(where: { $0.id == id }) else {
             return
         }
@@ -241,6 +300,8 @@ public final class TSBinanceCredentialStore: NSObject {
             if let first = accounts.first {
                 setActiveAccount(id: first.id)
             } else {
+                try? deleteValue(forAccount: Self.activeAccountIdAccount)
+                removeActiveAccountIdFromSharedPlist()
                 GetStandardUserDefaults().removeObject(forKey: HUDUserDefaultsKeyBinanceActiveAccountId)
                 GetStandardUserDefaults().synchronize()
                 notifyChange()
@@ -298,7 +359,9 @@ public final class TSBinanceCredentialStore: NSObject {
             try deleteValue(forAccount: Self.accountsAccount)
             try deleteValue(forAccount: Self.legacyApiKeyAccount)
             try deleteValue(forAccount: Self.legacySecretAccount)
+            try? deleteValue(forAccount: Self.activeAccountIdAccount)
             cachedAccounts = []
+            removeActiveAccountIdFromSharedPlist()
             GetStandardUserDefaults().removeObject(forKey: HUDUserDefaultsKeyBinanceActiveAccountId)
             GetStandardUserDefaults().synchronize()
             notifyChange()
@@ -319,13 +382,7 @@ public final class TSBinanceCredentialStore: NSObject {
                 name: UserDefaults.didChangeNotification,
                 object: nil
             )
-            CFNotificationCenterPostNotification(
-                CFNotificationCenterGetDarwinNotifyCenter(),
-                CFNotificationName("com.inighty.binancemonitor.notification.hud.reload" as CFString),
-                nil,
-                nil,
-                true
-            )
+            PostHUDNotification(kHUDNotificationReload)
         }
     }
 

@@ -222,12 +222,17 @@ void SimulateMemoryPressure(void)
 }
 #endif
 
+const char * const kHUDNotificationReload = NOTIFY_RELOAD_HUD;
+
 NSUserDefaults *GetStandardUserDefaults(void)
 {
     static NSUserDefaults *_userDefaults = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        NSString *containerPath = [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByDeletingLastPathComponent];
+        NSString *containerPath = @"/var/mobile";
+        if (![[NSFileManager defaultManager] fileExistsAtPath:containerPath]) {
+            containerPath = [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject] stringByDeletingLastPathComponent];
+        }
         NSURL *containerURL = [NSURL fileURLWithPath:containerPath];
         _userDefaults = [[NSUserDefaults alloc] _initWithSuiteName:nil container:containerURL];
         [_userDefaults registerDefaults:@{
@@ -253,4 +258,15 @@ NSUserDefaults *GetStandardUserDefaults(void)
         }];
     });
     return _userDefaults;
+}
+
+void PostHUDNotification(const char *name)
+{
+    if (!name) return;
+    notify_post(name);
+    CFStringRef cfName = CFStringCreateWithCString(kCFAllocatorDefault, name, kCFStringEncodingUTF8);
+    if (cfName) {
+        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), cfName, NULL, NULL, YES);
+        CFRelease(cfName);
+    }
 }
