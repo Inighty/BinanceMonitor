@@ -13,7 +13,7 @@ permissions:
 env:
   THEOS: ''
   PKG_VERSION: ''
-  XCODE_VERSION: '16.0'
+  XCODE_VERSION: '16.2'
 
 jobs:
   build:
