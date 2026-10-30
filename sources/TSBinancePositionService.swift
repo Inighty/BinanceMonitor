@@ -332,12 +332,15 @@ final class TSBinancePositionService: NSObject {
 
         let baseAttributes: [NSAttributedString.Key: Any] = [
             .font: mainFont,
+            .foregroundColor: UIColor.white,
         ]
         let detailAttributes: [NSAttributedString.Key: Any] = [
             .font: detailFont,
+            .foregroundColor: UIColor.white,
         ]
         let mutedAttributes: [NSAttributedString.Key: Any] = [
             .font: mutedFont,
+            .foregroundColor: UIColor(white: 0.85, alpha: 1.0),
         ]
 
         let attributed = NSMutableAttributedString()

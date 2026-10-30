@@ -916,11 +916,21 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
             intptr_t timedOut = dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)));
             dispatch_async(dispatch_get_main_queue(), ^{
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                if (!strongSelf) return;
                 if (timedOut) {
                     log_error(OS_LOG_DEFAULT, "Timed out waiting for HUD to launch");
                 }
-                [self reloadMainButtonState];
-                [self.backgroundView setUserInteractionEnabled:YES];
+                [strongSelf reloadMainButtonState];
+                [strongSelf.backgroundView setUserInteractionEnabled:YES];
+
+                if (timedOut && !strongSelf->_isRemoteHUDActive) {
+                    UIAlertController *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Launch Failed", nil)
+                                                                                   message:NSLocalizedString(@"Unable to launch floating window. Please ensure the app is installed via TrollStore to grant root and overlay permissions.", nil)
+                                                                            preferredStyle:UIAlertControllerStyleAlert];
+                    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault handler:nil]];
+                    [strongSelf presentViewController:alert animated:YES completion:nil];
+                }
             });
         });
     }

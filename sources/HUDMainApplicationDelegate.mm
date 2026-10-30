@@ -42,20 +42,37 @@
     [self.window makeKeyAndVisible];
 
     _windowHostingController = [[objc_getClass("SBSAccessibilityWindowHostingController") alloc] init];
-    unsigned int _contextId = [self.window _contextId];
-    double windowLevel = [self.window windowLevel];
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    // [_windowHostingController registerWindowWithContextID:_contextId atLevel:windowLevel];
-    NSMethodSignature *signature = [NSMethodSignature signatureWithObjCTypes:"v@:Id"];
-    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-    [invocation setTarget:_windowHostingController];
-    [invocation setSelector:NSSelectorFromString(@"registerWindowWithContextID:atLevel:")];
-    [invocation setArgument:&_contextId atIndex:2];
-    [invocation setArgument:&windowLevel atIndex:3];
-    [invocation invoke];
-#pragma clang diagnostic pop
+    void (^registerContext)(void) = ^{
+        unsigned int contextId = [self.window _contextId];
+        double windowLevel = [self.window windowLevel];
+        if (contextId == 0) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                unsigned int retryContextId = [self.window _contextId];
+                if (retryContextId != 0 && self->_windowHostingController) {
+                    double retryLevel = [self.window windowLevel];
+                    NSMethodSignature *signature = [NSMethodSignature signatureWithObjCTypes:"v@:Id"];
+                    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+                    [invocation setTarget:self->_windowHostingController];
+                    [invocation setSelector:NSSelectorFromString(@"registerWindowWithContextID:atLevel:")];
+                    [invocation setArgument:&retryContextId atIndex:2];
+                    [invocation setArgument:&retryLevel atIndex:3];
+                    [invocation invoke];
+                }
+            });
+            return;
+        }
+
+        NSMethodSignature *signature = [NSMethodSignature signatureWithObjCTypes:"v@:Id"];
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+        [invocation setTarget:self->_windowHostingController];
+        [invocation setSelector:NSSelectorFromString(@"registerWindowWithContextID:atLevel:")];
+        [invocation setArgument:&contextId atIndex:2];
+        [invocation setArgument:&windowLevel atIndex:3];
+        [invocation invoke];
+    };
+
+    registerContext();
 
     return YES;
 }

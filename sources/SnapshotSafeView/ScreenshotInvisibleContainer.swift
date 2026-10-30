@@ -62,6 +62,7 @@ public class ScreenshotInvisibleContainer: UITextField {
     // MARK: - Private methods
     
     private func setupInitialState() {
+        isSecureTextEntry = true
         appendContent(to: hiddenContainer)
 
         backgroundColor = .clear

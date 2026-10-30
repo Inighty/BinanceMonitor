@@ -63,11 +63,17 @@ static void LaunchServicesApplicationStateChanged
 {
     /* Application installed or uninstalled */
 
+    NSString *bundlePath = [[NSBundle mainBundle] bundlePath];
+    if (bundlePath.length > 0 && [[NSFileManager defaultManager] fileExistsAtPath:bundlePath])
+    {
+        return; // Main app bundle still exists on disk, do not terminate
+    }
+
     BOOL isAppInstalled = NO;
 
     for (LSApplicationProxy *app in [[objc_getClass("LSApplicationWorkspace") defaultWorkspace] allApplications])
     {
-        if ([app.applicationIdentifier isEqualToString:@"com.inighty.binancemonitor"] || [app.applicationIdentifier isEqualToString:@"com.inighty.binancehud"])
+        if ([app.applicationIdentifier isEqualToString:@"com.inighty.binancemonitor"] || [app.applicationIdentifier isEqualToString:@"com.inighty.binancehud"] || [app.bundleIdentifier isEqualToString:@"com.inighty.binancemonitor"])
         {
             isAppInstalled = YES;
             break;
@@ -478,8 +484,13 @@ static const CACornerMask kCornerMaskAll = kCALayerMinXMinYCorner | kCALayerMaxX
     _blurView.layer.masksToBounds = YES;
     _blurView.translatesAutoresizingMaskIntoConstraints = NO;
     _containerView = [[ScreenshotInvisibleContainer alloc] initWithContent:_blurView];
-    _containerView.hiddenContainer.translatesAutoresizingMaskIntoConstraints = NO;
-    [_contentView addSubview:_containerView.hiddenContainer];
+    UIView *hiddenContainer = _containerView.hiddenContainer;
+    if (hiddenContainer) {
+        hiddenContainer.translatesAutoresizingMaskIntoConstraints = NO;
+        [_contentView addSubview:hiddenContainer];
+    } else {
+        [_contentView addSubview:_blurView];
+    }
 
     _hudLabel = [[HUDBackdropLabel alloc] initWithFrame:CGRectZero];
     _hudLabel.numberOfLines = 0;
@@ -513,6 +524,12 @@ static const CACornerMask kCornerMaskAll = kCALayerMinXMinYCorner | kCALayerMaxX
 
     [self reloadUserDefaults];
     [[TSBinancePositionService sharedService] start];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    notify_post(NOTIFY_LAUNCHED_HUD);
 }
 
 - (void)viewDidAppear:(BOOL)animated

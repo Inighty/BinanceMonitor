@@ -112,3 +112,6 @@
 "Are you sure you want to delete '%@'?" = "确定要删除账户“%@”吗？";
 "Use Testnet" = "使用测试网环境";
 "Account %d" = "账户 %d";
+"Launch Failed" = "启动悬浮窗失败";
+"Unable to launch floating window. Please ensure the app is installed via TrollStore to grant root and overlay permissions." = "未能启动悬浮窗。本应用需要全局悬浮窗与后台守护权限，必须通过 TrollStore (巨魔商店) 安装，普通证书签名或侧载工具无法运行。";
+"OK" = "好";

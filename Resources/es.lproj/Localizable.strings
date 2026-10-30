@@ -112,3 +112,6 @@
 "Are you sure you want to delete '%@'?" = "¿Estás seguro de que deseas eliminar '%@'?";
 "Use Testnet" = "Usar Testnet";
 "Account %d" = "Cuenta %d";
+"Launch Failed" = "Error al iniciar";
+"Unable to launch floating window. Please ensure the app is installed via TrollStore to grant root and overlay permissions." = "No se puede abrir la ventana flotante. Esta aplicación requiere TrollStore para obtener permisos de superposición y raíz.";
+"OK" = "OK";

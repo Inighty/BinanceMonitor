@@ -112,3 +112,6 @@
 "Are you sure you want to delete '%@'?" = "Are you sure you want to delete '%@'?";
 "Use Testnet" = "Use Testnet";
 "Account %d" = "Account %d";
+"Launch Failed" = "Launch Failed";
+"Unable to launch floating window. Please ensure the app is installed via TrollStore to grant root and overlay permissions." = "Unable to launch floating window. This app requires root and overlay permissions and must be installed via TrollStore.";
+"OK" = "OK";
