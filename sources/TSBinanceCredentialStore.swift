@@ -319,7 +319,13 @@ public final class TSBinanceCredentialStore: NSObject {
                 name: UserDefaults.didChangeNotification,
                 object: nil
             )
-            notify_post(NOTIFY_RELOAD_HUD)
+            CFNotificationCenterPostNotification(
+                CFNotificationCenterGetDarwinNotifyCenter(),
+                CFNotificationName("com.inighty.binancemonitor.notification.hud.reload" as CFString),
+                nil,
+                nil,
+                true
+            )
         }
     }
 
