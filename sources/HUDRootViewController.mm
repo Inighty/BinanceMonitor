@@ -73,7 +73,7 @@ static void LaunchServicesApplicationStateChanged
 
     for (LSApplicationProxy *app in [[objc_getClass("LSApplicationWorkspace") defaultWorkspace] allApplications])
     {
-        if ([app.applicationIdentifier isEqualToString:@"com.inighty.binancemonitor"] || [app.applicationIdentifier isEqualToString:@"com.inighty.binancehud"] || [app.bundleIdentifier isEqualToString:@"com.inighty.binancemonitor"])
+        if ([app.applicationIdentifier isEqualToString:@"com.inighty.binancemonitor"] || [app.applicationIdentifier isEqualToString:@"com.inighty.binancehud"])
         {
             isAppInstalled = YES;
             break;

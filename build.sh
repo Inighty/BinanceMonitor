@@ -30,7 +30,7 @@ xcodebuild clean build archive \
 -archivePath BinanceMonitor \
 CODE_SIGNING_ALLOWED=NO \
 IPHONEOS_DEPLOYMENT_TARGET=16.0 \
-THEOS="$THEOS" | xcpretty
+THEOS="$THEOS" | xcpretty --simple
 
 chmod 0644 Resources/Info.plist
 cp supports/entitlements.plist BinanceMonitor.xcarchive/Products
