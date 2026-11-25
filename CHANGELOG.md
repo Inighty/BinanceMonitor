@@ -1,3 +1,11 @@
+# BinanceMonitor 2.0-16
+
+## Features & Improvements
+
+- **Display All Open Positions**: Removed the 1/2/3-position truncation and `+N more` footer when no focus symbol is set; all open futures positions are now listed directly in the HUD (with per-position secondary entry/ROE lines when enabled).
+- **TrollStore In-App Updater (Private & Public Repo Support)**: Added built-in GitHub Releases update checking and direct one-tap installation via TrollStore (`apple-magnifier://install?url=...`), including 302 pre-signed URL resolution for private repositories.
+- **GitHub Update Token Support**: Supports optional CI-injected read-only PAT (`UPDATE_GITHUB_TOKEN`) as well as in-app Keychain override in Settings, plus manual `.tipa` download & share sheet fallback.
+
 # BinanceMonitor 2.0-15
 
 ## Improvements & Bug Fixes
