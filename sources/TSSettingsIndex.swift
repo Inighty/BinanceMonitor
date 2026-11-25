@@ -28,6 +28,9 @@ enum TSSettingsIndex: Int, CaseIterable {
     case usesInvertedColor
     case usesRotation
     case usesLargeFont
+    case checkForUpdates
+    case autoCheckUpdates
+    case githubUpdateToken
 
     var key: String {
         switch self {
@@ -75,6 +78,12 @@ enum TSSettingsIndex: Int, CaseIterable {
             return HUDUserDefaultsKeyUsesRotation
         case .usesLargeFont:
             return HUDUserDefaultsKeyUsesLargeFont
+        case .checkForUpdates:
+            return HUDUserDefaultsKeyCheckForUpdates
+        case .autoCheckUpdates:
+            return HUDUserDefaultsKeyAutoCheckUpdates
+        case .githubUpdateToken:
+            return HUDUserDefaultsKeyGitHubUpdateToken
         }
     }
 
@@ -124,13 +133,19 @@ enum TSSettingsIndex: Int, CaseIterable {
             return NSLocalizedString("Landscape", comment: "TSSettingsIndex")
         case .usesLargeFont:
             return NSLocalizedString("Size", comment: "TSSettingsIndex")
+        case .checkForUpdates:
+            return NSLocalizedString("Check for Updates", comment: "TSSettingsIndex")
+        case .autoCheckUpdates:
+            return NSLocalizedString("Auto Check Updates", comment: "TSSettingsIndex")
+        case .githubUpdateToken:
+            return NSLocalizedString("GitHub Update Token", comment: "TSSettingsIndex")
         }
     }
 
     var kind: TSSettingItemKind {
         switch self {
         case .binanceAccount, .binanceUseTestnet, .binanceRefreshInterval, .binanceDisplayMode, .binanceFocusSymbol,
-             .usesInvertedColor, .usesRotation, .usesLargeFont:
+             .usesInvertedColor, .usesRotation, .usesLargeFont, .checkForUpdates, .githubUpdateToken:
             return .value
         default:
             return .toggle
@@ -157,7 +172,7 @@ enum TSSettingsIndex: Int, CaseIterable {
         case .binanceFocusSymbol:
             return TSSettingsIndex.binanceFocusSymbolSubtitle()
         case .binanceShowSymbol, .binanceShowSide, .binanceShowQuantity, .binanceShowCurrentPrice, .binanceShowEntryPrice, .binanceShowPnL, .binanceShowROE,
-             .binanceShowTotalEquity, .binanceShowFloatingPnL, .binanceShowFloatingPnLRate, .binanceShowTotalROI:
+             .binanceShowTotalEquity, .binanceShowFloatingPnL, .binanceShowFloatingPnLRate, .binanceShowTotalROI, .autoCheckUpdates:
             return highlighted ? NSLocalizedString("ON", comment: "TSSettingsIndex") : NSLocalizedString("OFF", comment: "TSSettingsIndex")
         case .passthroughMode:
             if restartRequired {
@@ -172,6 +187,10 @@ enum TSSettingsIndex: Int, CaseIterable {
             return highlighted ? NSLocalizedString("Follow", comment: "TSSettingsIndex") : NSLocalizedString("Hide", comment: "TSSettingsIndex")
         case .usesLargeFont:
             return highlighted ? NSLocalizedString("Large", comment: "TSSettingsIndex") : NSLocalizedString("Standard", comment: "TSSettingsIndex")
+        case .checkForUpdates:
+            return TSAppUpdater.sharedUpdater().updateRowSubtitle()
+        case .githubUpdateToken:
+            return TSAppUpdater.sharedUpdater().tokenStatusSummary()
         }
     }
 

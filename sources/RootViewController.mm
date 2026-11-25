@@ -295,7 +295,11 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    BOOL launchedForToggle = [RootViewController shouldToggleHUDAfterLaunch];
     [self toggleHUDAfterLaunch];
+    if (!launchedForToggle) {
+        [[TSAppUpdater sharedUpdater] checkOnLaunchIfEnabledFrom:self];
+    }
 }
 
 - (void)toggleHUDNotificationReceived:(NSNotification *)notification {
@@ -624,6 +628,18 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
         return focus.length > 0;
     }
 
+    if ([key isEqualToString:HUDUserDefaultsKeyCheckForUpdates]) {
+        return [[TSAppUpdater sharedUpdater] hasAvailableUpdate];
+    }
+
+    if ([key isEqualToString:HUDUserDefaultsKeyAutoCheckUpdates]) {
+        return [GetStandardUserDefaults() boolForKey:HUDUserDefaultsKeyAutoCheckUpdates];
+    }
+
+    if ([key isEqualToString:HUDUserDefaultsKeyGitHubUpdateToken]) {
+        return [[TSAppUpdater sharedUpdater] hasAnyToken];
+    }
+
     if (IsBinanceStandardToggleKey(key)) {
         return [GetStandardUserDefaults() boolForKey:key];
     }
@@ -635,6 +651,23 @@ static BOOL RemoveObsoleteHUDKeys(NSMutableDictionary *userDefaults)
 
 - (void)settingDidSelectWithKey:(NSString * _Nonnull)key
 {
+    if ([key isEqualToString:HUDUserDefaultsKeyCheckForUpdates]) {
+        [[TSAppUpdater sharedUpdater] presentUpdaterFrom:[self topmostPresentedController] startCheck:YES];
+        return;
+    }
+
+    if ([key isEqualToString:HUDUserDefaultsKeyAutoCheckUpdates]) {
+        BOOL enabled = [GetStandardUserDefaults() boolForKey:HUDUserDefaultsKeyAutoCheckUpdates];
+        [GetStandardUserDefaults() setBool:!enabled forKey:HUDUserDefaultsKeyAutoCheckUpdates];
+        [GetStandardUserDefaults() synchronize];
+        return;
+    }
+
+    if ([key isEqualToString:HUDUserDefaultsKeyGitHubUpdateToken]) {
+        [[TSAppUpdater sharedUpdater] presentTokenEditorFrom:[self topmostPresentedController]];
+        return;
+    }
+
     if ([key isEqualToString:HUDUserDefaultsKeyBinanceAccount]) {
         if (self.presentedViewController) {
             [self dismissViewControllerAnimated:YES completion:^{

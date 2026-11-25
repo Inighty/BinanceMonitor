@@ -65,6 +65,12 @@ import UIKit
             name: UserDefaults.didChangeNotification,
             object: nil
         )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(defaultsChanged),
+            name: TSAppUpdater.didChangeNotification,
+            object: nil
+        )
     }
 
     open override func viewWillAppear(_ animated: Bool) {
@@ -133,6 +139,14 @@ import UIKit
             items: [
                 .passthroughMode, .keepInPlace, .hideAtSnapshot,
                 .usesInvertedColor, .usesRotation, .usesLargeFont,
+            ]
+        ))
+
+        built.append(Section(
+            title: NSLocalizedString("Updates", comment: "TSSettingsController"),
+            footer: NSLocalizedString("Checks GitHub Releases and installs directly via TrollStore. For private repositories, configure a read-only GitHub token (Contents: Read-only).", comment: "TSSettingsController"),
+            items: [
+                .checkForUpdates, .autoCheckUpdates, .githubUpdateToken,
             ]
         ))
 

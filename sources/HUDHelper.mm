@@ -255,6 +255,7 @@ NSUserDefaults *GetStandardUserDefaults(void)
             HUDUserDefaultsKeyBinanceShowFloatingPnL: @YES,
             HUDUserDefaultsKeyBinanceShowFloatingPnLRate: @NO,
             HUDUserDefaultsKeyBinanceShowTotalROI: @NO,
+            HUDUserDefaultsKeyAutoCheckUpdates: @YES,
         }];
     });
     return _userDefaults;

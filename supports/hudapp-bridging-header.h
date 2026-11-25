@@ -49,4 +49,8 @@ static HUDUserDefaultsKey const HUDUserDefaultsKeyUsesCustomOffset = @"usesCusto
 static HUDUserDefaultsKey const HUDUserDefaultsKeyRealCustomOffsetX = @"realCustomOffsetX";
 static HUDUserDefaultsKey const HUDUserDefaultsKeyRealCustomOffsetY = @"realCustomOffsetY";
 
+static HUDUserDefaultsKey const HUDUserDefaultsKeyCheckForUpdates = @"checkForUpdates";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyAutoCheckUpdates = @"autoCheckUpdates";
+static HUDUserDefaultsKey const HUDUserDefaultsKeyGitHubUpdateToken = @"githubUpdateToken";
+
 #endif /* hudapp_bridging_header_h */
