@@ -286,10 +286,6 @@ final class TSBinancePositionService: NSObject {
                 ].joined(separator: " "))
             }
 
-            if displayOptions.focusSymbol.isEmpty, let first = displayEntries.first {
-                lines.append("centeredDefault: \(first.rawSymbol) \(first.side) pnl=\(first.pnl)")
-            }
-
             lines.append("positionSnapshots: \(positionSnapshots.count)")
             for (index, position) in positionSnapshots.enumerated() {
                 lines.append([
@@ -310,7 +306,7 @@ final class TSBinancePositionService: NSObject {
             lines.append("notes:")
             lines.append("  pnl uses Binance /fapi/v3/positionRisk unRealizedProfit when present.")
             lines.append("  mark uses REST snapshot plus public mark-price stream updates.")
-            lines.append("  centered HUD without focus shows display[0].")
+            lines.append("  HUD without focus shows all open positions.")
         }
 
         return lines.joined(separator: "\n")
@@ -380,7 +376,6 @@ final class TSBinancePositionService: NSObject {
         }
 
         let visibleEntries: [TSBinanceDisplayEntry]
-        let remainingCount: Int
         let forceCentered: Bool
 
         if !options.focusSymbol.isEmpty {
@@ -389,19 +384,17 @@ final class TSBinancePositionService: NSObject {
             }
             let match = entries.first { $0.rawSymbol.uppercased() == options.focusSymbol }
             visibleEntries = [match ?? entries[0]]
-            remainingCount = 0
             forceCentered = true
         } else {
             guard !entries.isEmpty else {
                 attributed.append(NSAttributedString(string: NSLocalizedString("No open futures positions", comment: "TSBinancePositionService"), attributes: baseAttributes))
                 return attributed
             }
-            let visibleCount = centered ? 1 : min(entries.count, focused ? 2 : 3)
-            visibleEntries = Array(entries.prefix(visibleCount))
-            remainingCount = entries.count - visibleEntries.count
+            visibleEntries = entries
             forceCentered = false
         }
 
+        let showSecondary = focused || centered || forceCentered
         for (index, entry) in visibleEntries.enumerated() {
             if index > 0 {
                 attributed.append(NSAttributedString(string: "\n", attributes: detailAttributes))
@@ -409,19 +402,10 @@ final class TSBinancePositionService: NSObject {
 
             let mainLine = mainLineText(for: entry, options: options)
             attributed.append(NSAttributedString(string: mainLine, attributes: baseAttributes))
-        }
 
-        let primaryEntry = visibleEntries[0]
-
-        if (focused || centered || forceCentered), let secondaryLine = secondaryLineText(for: primaryEntry, options: options) {
-            attributed.append(NSAttributedString(string: "\n" + secondaryLine, attributes: detailAttributes))
-        }
-
-        if remainingCount > 0 {
-            attributed.append(NSAttributedString(
-                string: "\n+" + String(remainingCount) + " " + NSLocalizedString("more", comment: "TSBinancePositionService"),
-                attributes: mutedAttributes
-            ))
+            if showSecondary, let secondaryLine = secondaryLineText(for: entry, options: options) {
+                attributed.append(NSAttributedString(string: "\n" + secondaryLine, attributes: detailAttributes))
+            }
         }
 
         return attributed
